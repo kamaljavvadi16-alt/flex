@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flex — Don't Carry. Just Flex.</title>
+<style>
+  /* ============================================================
+     THEME VARIABLES (Microsoft Fluent Design System)
+     ============================================================ */
+  :root {
+    --color-primary: #0078D4;
+    --color-primary-hover: #106EBE;
+    --color-primary-pressed: #005A9E;
+    --color-primary-light: #DEECF9;
+    --color-primary-lighter: #EFF6FC;
+
+    --color-bg: #F3F2F1;
+    --color-surface: #FFFFFF;
+    --color-border: #EDEBE9;
+    --color-border-strong: #C8C6C4;
+    --color-divider: #E1DFDD;
+
+    --color-text: #201F1E;
+    --color-text-secondary: #605E5C;
+    --color-text-muted: #8A8886;
+    --color-text-disabled: #A19F9D;
+    --color-text-on-primary: #FFFFFF;
+
+    --color-danger: #A4262C;
+    --color-danger-light: #FDE7E9;
+    --color-success: #107C10;
+    --color-success-light: #DFF6DD;
+    --color-warning: #8A6E00;
+    --color-warning-light: #FFF4CE;
+
+    --radius: 4px;
+    --radius-sm: 2px;
+
+    --shadow-sm: 0 1.6px 3.6px rgba(0,0,0,0.08), 0 0.3px 0.9px rgba(0,0,0,0.06);
+    --shadow-md: 0 3.2px 7.2px rgba(0,0,0,0.10), 0 0.6px 1.8px rgba(0,0,0,0.07);
+    --shadow-lg: 0 6.4px 14.4px rgba(0,0,0,0.13), 0 1.2px 3.6px rgba(0,0,0,0.10);
+
+    --transition: 200ms cubic-bezier(0.1, 0.9, 0.2, 1);
+
+    --sidebar-width: 240px;
+    --header-height: 56px;
+
+    --font: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  }
+
+  /* ============================================================
+     RESET
+     ============================================================ */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--color-text);
+    background: var(--color-bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font-family: inherit; cursor: pointer; }
+  input, select, button { font-family: inherit; font-size: 14px; color: inherit; }
+  a { color: var(--color-primary); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ============================================================
+     PAGE SWITCHING
+     ============================================================ */
+  .page { display: none; animation: fadeIn var(--transition); }
+  .page.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============================================================
+     LOGIN PAGE
+     ============================================================ */
+  #page-login.active { display: flex; }
+  #page-login {
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    flex-direction: column;
+    background:
+      radial-gradient(circle at 20% 10%, #DEECF9 0%, transparent 45%),
+      radial-gradient(circle at 90% 80%, #EFF6FC 0%, transparent 50%),
+      var(--color-bg);
+  }
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--color-surface);
+    padding: 44px 40px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+  .login-logo {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: var(--color-text);
+    margin: 0;
+    text-align: center;
+  }
+  .login-logo span { color: var(--color-primary); }
+  .login-caption {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    text-align: center;
+    margin: 6px 0 32px;
+    font-style: italic;
+  }
+
+  /* Fluent input — bottom border only */
+  .fluent-field {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .fluent-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 6px;
+  }
+  .fluent-field .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--color-border-strong);
+    background: var(--color-surface);
+    transition: border-color var(--transition);
+  }
+  .fluent-field .input-wrap:hover { border-color: var(--color-text-secondary); }
+  .fluent-field .input-wrap:focus-within {
+    border-color: var(--color-primary);
+    border-bottom-width: 2px;
+  }
+  .fluent-field input,
+  .fluent-field select {
+    flex: 1;
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 8px 10px;
+    background: transparent;
+    font-size: 14px;
+    min-width: 0;
+  }
+  .fluent-field .prefix {
+    padding: 8px 8px 8px 10px;
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    border-right: 1px solid var(--color-border);
+  }
+  .fluent-field .icon-btn {
+    background: transparent;
+    border: none;
+    padding: 0 10px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+  .fluent-field .icon-btn:hover { color: var(--color-primary); }
+  .fluent-field .error-msg {
+    display: none;
+    color: var(--color-danger);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  .fluent-field.invalid .input-wrap { border-color: var(--color-danger); }
+  .fluent-field.invalid .error-msg { display: block; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 32px;
+    padding: 6px 18px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition), box-shadow var(--transition), border-color var(--transition);
+    user-select: none;
+  }
+  .btn-primary {
+    background: var(--color-primary);
+    color: var(--color-text-on-primary);
+    border-color: var(--color-primary);
+  }
+  .btn-primary:hover {
+    background: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-primary:active { background: var(--color-primary-pressed); }
+  .btn-secondary {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
+  }
+  .btn-secondary:hover { background: var(--color-bg); box-shadow: var(--shadow-sm); }
+  .btn-block { width: 100%; }
+
+  .login-actions { margin-top: 24px; }
+  .forgot-link {
+    display: block;
+    text-align: center;
+    margin-top: 14px;
+    font-size: 13px;
+  }
+  .login-footer {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+
+  /* ============================================================
+     APP SHELL (Dashboard + inner pages share this)
+     ============================================================ */
+  .app {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    min-height: 100vh;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    background: var(--color-bg);
+    border-right: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+  .sidebar-logo {
+    padding: 18px 20px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .sidebar-logo span { color: var(--color-primary); }
+  .sidebar-nav {
+    padding: 12px 0;
+    flex: 1;
+    overflow-y: auto;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: background var(--transition), color var(--transition);
+    user-select: none;
+  }
+  .nav-item:hover { background: #EDEBE9; color: var(--color-text); }
+  .nav-item.active {
+    background: var(--color-surface);
+    color: var(--color-primary);
+    border-left-color: var(--color-primary);
+    font-weight: 600;
+  }
+  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  .sidebar-profile {
+    border-top: 1px solid var(--color-border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .profile-info { flex: 1; min-width: 0; }
+  .profile-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .profile-role {
+    font-size: 11px;
+    color: var(--color-text-muted);
+  }
+  .logout-btn {
+    background: transparent;
+    border: none;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logout-btn:hover { background: var(--color-border); color: var(--color-danger); }
+
+  /* Main column */
+  .main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  /* Top header */
+  .topbar {
+    height: var(--header-height);
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 24px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .page-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+    flex-shrink: 0;
+  }
+  .topbar-search {
+    flex: 1;
+    max-width: 420px;
+    margin-left: 12px;
+    display: flex;
+    align-items: center;
+    background: var(--color-bg);
+    border: 1px solid transparent;
+    padding: 4px 10px;
+    transition: border-color var(--transition), background var(--transition);
+  }
+  .topbar-search:focus-within {
+    background: var(--color-surface);
+    border-color: var(--color-primary);
+  }
+  .topbar-search svg {
+    width: 16px; height: 16px;
+    color: var(--color-text-secondary);
+    margin-right: 8px;
+  }
+  .topbar-search input {
+    border: none; outline: none; background: transparent;
+    width: 100%; padding: 4px 0;
+  }
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+  }
+  .icon-button {
+    background: transparent;
+    border: none;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-secondary);
+    position: relative;
+    border-radius: var(--radius-sm);
+  }
+  .icon-button:hover { background: var(--color-bg); color: var(--color-text); }
+  .icon-button svg { width: 18px; height: 18px; }
+  .notif-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background: var(--color-danger);
+    border-radius: 50%;
+    border: 2px solid var(--color-surface);
+  }
+
+  /* Content area */
+  .content { padding: 24px; flex: 1; }
+
+  /* Breadcrumbs */
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-bottom: 16px;
+  }
+  .breadcrumb a { color: var(--color-text-secondary); }
+  .breadcrumb .crumb-current { color: var(--color-text); font-weight: 600; }
+  .breadcrumb svg { width: 12px; height: 12px; }
+
+  /* Card */
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+  .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-title { font-size: 16px; font-weight: 600; margin: 0; }
+  .card-body { padding: 20px; }
+
+  /* Stat cards grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition), transform var(--transition);
+  }
+  .stat-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+  .stat-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .stat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius);
+    background: var(--color-primary-lighter);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .stat-icon svg { width: 20px; height: 20px; }
+  .stat-icon.green { background: var(--color-success-light); color: var(--color-success); }
+  .stat-icon.orange { background: var(--color-warning-light); color: var(--color-warning); }
+  .stat-icon.red { background: var(--color-danger-light); color: var(--color-danger); }
+  .stat-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--color-text);
+    line-height: 1.1;
+  }
+  .stat-label {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-top: 4px;
+  }
+  .stat-trend {
+    font-size: 12px;
+    margin-top: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .stat-trend.up { color: var(--color-success); }
+  .stat-trend.down { color: var(--color-danger); }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead th {
+    text-align: left;
+    padding: 10px 16px;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+    border-bottom: 1px solid var(--color-border);
+    background: #FAFAFA;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+  }
+  tbody tr { transition: background var(--transition); }
+  tbody tr:hover { background: var(--color-bg); }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-success { background: var(--color-success-light); color: var(--color-success); }
+  .badge-warning { background: var(--color-warning-light); color: var(--color-warning); }
+  .badge-danger { background: var(--color-danger-light); color: var(--color-danger); }
+  .badge-info { background: var(--color-primary-light); color: var(--color-primary); }
+
+  /* Form layout */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 24px;
+  }
+  .form-grid .full { grid-column: 1 / -1; }
+
+  /* Fluent select — inherit fluent-field wrapper */
+  .fluent-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%23605E5C' d='M4 6l4 4 4-4z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+
+  /* Toggle switch */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .toggle-row .toggle-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  .toggle-row .toggle-desc {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+  }
+  .toggle {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-text);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background var(--transition), border-color var(--transition);
+    flex-shrink: 0;
+  }
+  .toggle::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    background: var(--color-text);
+    border-radius: 50%;
+    transition: left var(--transition), background var(--transition);
+  }
+  .toggle.on {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+  .toggle.on::before {
+    left: 24px;
+    background: #fff;
+  }
+
+  /* Form actions */
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* Hidden util */
+  .hidden { display: none !important; }
+
+  /* ============================================================
+     TOAST NOTIFICATIONS
+     ============================================================ */
+  #toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .toast {
+    min-width: 280px;
+    max-width: 380px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-primary);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    box-shadow: var(--shadow-lg);
+    animation: slideIn 250ms ease;
+  }
+  .toast.hide { animation: slideOut 200ms ease forwards; }
+  .toast.success { border-left-color: var(--color-success); }
+  .toast.error   { border-left-color: var(--color-danger); }
+  .toast.warning { border-left-color: var(--color-warning); }
+  .toast .toast-icon {
+    flex-shrink: 0;
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .toast.success .toast-icon { color: var(--color-success); }
+  .toast.error .toast-icon   { color: var(--color-danger); }
+  .toast.warning .toast-icon { color: var(--color-warning); }
+  .toast.info .toast-icon    { color: var(--color-primary); }
+  .toast-body { flex: 1; font-size: 13px; color: var(--color-text); line-height: 1.4; }
+  .toast-title { font-weight: 600; display: block; margin-bottom: 2px; }
+  .toast-close {
+    background: transparent; border: none;
+    color: var(--color-text-muted); cursor: pointer;
+    padding: 0; width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .toast-close:hover { color: var(--color-text); }
+  @keyframes slideIn {
+    from { transform: translateX(110%); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+  }
+  @keyframes slideOut {
+    to   { transform: translateX(110%); opacity: 0; }
+  }
+
+  /* ============================================================
+     RESPONSIVE (tablet)
+     ============================================================ */
+  @media (max-width: 1024px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    :root { --sidebar-width: 72px; }
+    .sidebar-logo { font-size: 18px; padding: 18px 12px; text-align: center; }
+    .nav-item { padding: 12px; justify-content: center; }
+    .nav-item span.nav-label,
+    .profile-info { display: none; }
+    .sidebar-profile { justify-content: center; padding: 12px 8px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .topbar-search { display: none; }
+    .content { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     TOAST CONTAINER
+     ========================================================= -->
+<div id="toast-container"></div>
+
+<!-- =========================================================
+     PAGE 1 — LOGIN
+     ========================================================= -->
+<section id="page-login" class="page">
+  <div class="login-card">
+    <h1 class="login-logo">Flex<span>.</span></h1>
+    <p class="login-caption">Don't Carry. Just Flex.</p>
+
+    <form id="login-form" novalidate>
+      <div class="fluent-field" id="field-username">
+        <label for="login-username">Username</label>
+        <div class="input-wrap">
+          <input type="text" id="login-username" autocomplete="username" placeholder="Enter your username" />
+        </div>
+        <div class="error-msg">Username is required</div>
+      </div>
+
+      <div class="fluent-field" id="field-password">
+        <label for="login-password">Password</label>
+        <div class="input-wrap">
+          <input type="password" id="login-password" autocomplete="current-password" placeholder="Enter your password" />
+          <button type="button" class="icon-btn" id="toggle-password" aria-label="Show password">
+            <!-- Fluent eye icon -->
+            <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor"><path d="M10 4c-4 0-7.3 2.6-8.9 6.3a.8.8 0 000 .6C2.7 14.6 6 17.2 10 17.2s7.3-2.6 8.9-6.3a.8.8 0 000-.6C17.3 6.6 14 4 10 4zm0 11.7c-3.2 0-6-2-7.4-5 1.4-3 4.2-5 7.4-5s6 2 7.4 5c-1.4 3-4.2 5-7.4 5zm0-8.7a3.7 3.7 0 100 7.4 3.7 3.7 0 000-7.4zm0 5.9a2.2 2.2 0 110-4.4 2.2 2.2 0 010 4.4z"/></svg>
+          </button>
+        </div>
+        <div class="error-msg">Password is required</div>
+      </div>
+
+      <div class="login-actions">
+        <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+        <a href="#" class="forgot-link" id="forgot-link">Forgot password?</a>
+      </div>
+    </form>
+
+    <div class="login-footer">Flex Smart Campus Solutions © 2024</div>
+  </div>
+</section>
+
+<!-- =========================================================
+     APP SHELL (shared between dashboard + student form)
+     ========================================================= -->
+<section id="page-app" class="page">
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">Flex<span>.</span></div>
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <div class="nav-item active" data-view="dashboard">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 3h6v6H3V3zm0 8h6v6H3v-6zm8-8h6v6h-6V3zm0 8h6v6h-6v-6z"/></svg>
+          <span class="nav-label">Dashboard</span>
+        </div>
+        <div class="nav-item" data-view="students">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm0 8.5c-3.6 0-6.5 1.9-6.5 4.5v1h13v-1c0-2.6-2.9-4.5-6.5-4.5z"/></svg>
+          <span class="nav-label">Students</span>
+        </div>
+        <div class="nav-item" data-view="buspass">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 2h10a2 2 0 012 2v11a2 2 0 01-1 1.7V18a1 1 0 11-2 0v-1H6v1a1 1 0 11-2 0v-1.3A2 2 0 013 15V4a2 2 0 012-2zm0 2v6h10V4H5zm1 8a1 1 0 100 2 1 1 0 000-2zm8 0a1 1 0 100 2 1 1 0 000-2z"/></svg>
+          <span class="nav-label">Bus Pass</span>
+        </div>
+        <div class="nav-item" data-view="gate">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 3h4v14H3V3zm10 0h4v14h-4V3zM8 3h4v4H8V3zm0 6h4v2H8V9zm0 4h4v4H8v-4z"/></svg>
+          <span class="nav-label">Gate Entry</span>
+        </div>
+        <div class="nav-item" data-view="reports">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 3h9l3 3v11a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm0 5h12M6 11h8M6 14h6" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>
+          <span class="nav-label">Reports</span>
+        </div>
+        <div class="nav-item" data-view="settings">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 6.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm7.4 3a7.6 7.6 0 00-.1-1.2l1.7-1.3-1.8-3-2 .8a7.3 7.3 0 00-2-1.2L13 1.5H7l-.3 2.2a7.3 7.3 0 00-2 1.2l-2-.8-1.8 3 1.7 1.3a7.6 7.6 0 000 2.4L.9 12l1.8 3 2-.8a7.3 7.3 0 002 1.2l.3 2.1h6l.3-2.2a7.3 7.3 0 002-1.2l2 .8 1.8-3-1.7-1.2c0-.4.1-.8.1-1.2z"/></svg>
+          <span class="nav-label">Settings</span>
+        </div>
+      </nav>
+      <div class="sidebar-profile">
+        <div class="avatar" id="sidebar-avatar">A</div>
+        <div class="profile-info">
+          <div class="profile-name" id="sidebar-username">Admin</div>
+          <div class="profile-role">Administrator</div>
+        </div>
+        <button class="logout-btn" id="btn-logout" title="Sign out">
+          <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path d="M13 3a1 1 0 011 1v3a1 1 0 11-2 0V5H5v10h7v-2a1 1 0 112 0v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1h9zm3.3 6.3l-2.6-2.6a1 1 0 011.4-1.4l4 4c.4.4.4 1 0 1.4l-4 4a1 1 0 01-1.4-1.4l2.3-2.3H8a1 1 0 110-2h8.3z"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <header class="topbar">
+        <h1 class="page-title" id="current-page-title">Dashboard</h1>
+        <div class="topbar-search">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M13 12.3l4.3 4.3a1 1 0 01-1.4 1.4L11.6 13.7a6 6 0 111.4-1.4zM8 13A5 5 0 108 3a5 5 0 000 10z"/></svg>
+          <input type="text" placeholder="Search students, passes, reports..." />
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-button" title="Notifications">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 016 6v4l1.5 2.2a.8.8 0 01-.7 1.3H3.2a.8.8 0 01-.7-1.3L4 12V8a6 6 0 016-6zm-2 13a2 2 0 104 0H8z"/></svg>
+            <span class="notif-dot"></span>
+          </button>
+          <div class="avatar" id="topbar-avatar" style="width:32px;height:32px;margin-left:6px;">A</div>
+        </div>
+      </header>
+
+      <main class="content">
+        <!-- Dashboard view -->
+        <div class="view" id="view-dashboard">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-head">
+                <div>
+                  <div class="stat-value">1,248</div>
+                  <div class="stat-label">Total Students</div>
+                </div>
+                <div class="stat-icon">
+                  <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm0 8.5c-3.6 0-6.5 1.9-6.5 4.5v1h13v-1c0-2.6-2.9-4.5-6.5-4.5z"/></svg>
+                </div>
+              </div>
+              <div class="stat-trend up">▲ 4.2% vs last month</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-head">
+                <div>
+                  <div class="stat-value">982</div>
+                  <div class="stat-label">Active Bus Passes</div>
+                </div>
+                <div class="stat-icon green">
+                  <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 2h10a2 2 0 012 2v11a2 2 0 01-1 1.7V18a1 1 0 11-2 0v-1H6v1a1 1 0 11-2 0v-1.3A2 2 0 013 15V4a2 2 0 012-2zm0 2v6h10V4H5z"/></svg>
+                </div>
+              </div>
+              <div class="stat-trend up">▲ 1.8% vs last week</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-head">
+                <div>
+                  <div class="stat-value">3,421</div>
+                  <div class="stat-label">Today's Gate Entries</div>
+                </div>
+                <div class="stat-icon orange">
+                  <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 3h4v14H3V3zm10 0h4v14h-4V3zM8 3h4v4H8V3zm0 6h4v2H8V9zm0 4h4v4H8v-4z"/></svg>
+                </div>
+              </div>
+              <div class="stat-trend up">▲ 12% vs yesterday</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-head">
+                <div>
+                  <div class="stat-value">14</div>
+                  <div class="stat-label">Pending Approvals</div>
+                </div>
+                <div class="stat-icon red">
+                  <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 4a1 1 0 011 1v4a1 1 0 11-2 0V7a1 1 0 011-1zm0 9a1.2 1.2 0 110-2.4 1.2 1.2 0 010 2.4z"/></svg>
+                </div>
+              </div>
+              <div class="stat-trend down">▼ 3 resolved today</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Recent Activity</h2>
+              <a href="#" style="font-size:13px;">View all</a>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Roll No.</th>
+                    <th>Activity</th>
+                    <th>Gate / Route</th>
+                    <th>Status</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody id="activity-tbody">
+                  <tr>
+                    <td>Aarav Sharma</td>
+                    <td>22CS1042</td>
+                    <td>Gate Entry</td>
+                    <td>Main Gate</td>
+                    <td><span class="badge badge-success">Allowed</span></td>
+                    <td>09:12 AM</td>
+                  </tr>
+                  <tr>
+                    <td>Priya Menon</td>
+                    <td>22EC3019</td>
+                    <td>Bus Boarded</td>
+                    <td>Route 4</td>
+                    <td><span class="badge badge-info">On Trip</span></td>
+                    <td>08:54 AM</td>
+                  </tr>
+                  <tr>
+                    <td>Rohan Patel</td>
+                    <td>23ME2201</td>
+                    <td>Enrollment</td>
+                    <td>—</td>
+                    <td><span class="badge badge-warning">Pending</span></td>
+                    <td>08:40 AM</td>
+                  </tr>
+                  <tr>
+                    <td>Divya R.</td>
+                    <td>21IT1107</td>
+                    <td>Gate Exit</td>
+                    <td>Side Gate</td>
+                    <td><span class="badge badge-success">Allowed</span></td>
+                    <td>08:31 AM</td>
+                  </tr>
+                  <tr>
+                    <td>Karthik V.</td>
+                    <td>22AI4088</td>
+                    <td>Gate Entry</td>
+                    <td>Main Gate</td>
+                    <td><span class="badge badge-danger">Denied</span></td>
+                    <td>08:22 AM</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Students view -->
+        <div class="view hidden" id="view-students">
+          <nav class="breadcrumb">
+            <a href="#" data-view-link="dashboard">Dashboard</a>
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6 4l4 4-4 4"/></svg>
+            <a href="#" data-view-link="students">Students</a>
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6 4l4 4-4 4"/></svg>
+            <span class="crumb-current">Add Student</span>
+          </nav>
+
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Student Enrollment</h2>
+            </div>
+            <div class="card-body">
+              <form id="enroll-form" novalidate>
+                <div class="form-grid">
+
+                  <div class="fluent-field" data-field="fullName">
+                    <label for="f-fullname">Full Name</label>
+                    <div class="input-wrap">
+                      <input type="text" id="f-fullname" placeholder="e.g. Aarav Sharma" />
+                    </div>
+                    <div class="error-msg">Full name is required</div>
+                  </div>
+
+                  <div class="fluent-field" data-field="rollNumber">
+                    <label for="f-roll">Roll Number <span style="color:var(--color-text-muted);font-weight:400;">(also used as token)</span></label>
+                    <div class="input-wrap">
+                      <input type="text" id="f-roll" placeholder="e.g. 22CS1042" />
+                    </div>
+                    <div class="error-msg">Roll number must be alphanumeric</div>
+                  </div>
+
+                  <div class="fluent-field" data-field="class">
+                    <label for="f-class">Class</label>
+                    <div class="input-wrap">
+                      <select id="f-class">
+                        <option value="">Select class</option>
+                        <option>First Year</option>
+                        <option>Second Year</option>
+                        <option>Third Year</option>
+                        <option>Fourth Year</option>
+                      </select>
+                    </div>
+                    <div class="error-msg">Class is required</div>
+                  </div>
+
+                  <div class="fluent-field" data-field="section">
+                    <label for="f-section">Section</label>
+                    <div class="input-wrap">
+                      <select id="f-section">
+                        <option value="">Select section</option>
+                        <option>A</option><option>B</option><option>C</option>
+                        <option>D</option><option>E</option>
+                      </select>
+                    </div>
+                    <div class="error-msg">Section is required</div>
+                  </div>
+
+                  <div class="fluent-field" data-field="department">
+                    <label for="f-dept">Department</label>
+                    <div class="input-wrap">
+                      <select id="f-dept">
+                        <option value="">Select department</option>
+                        <option>CSE</option><option>ECE</option><option>EEE</option>
+                        <option>MECH</option><option>CIVIL</option><option>IT</option>
+                        <option>AIDS</option><option>AIML</option>
+                      </select>
+                    </div>
+                    <div class="error-msg">Department is required</div>
+                  </div>
+
+                  <div class="fluent-field" data-field="phone">
+                    <label for="f-phone">Phone Number</label>
+                    <div class="input-wrap">
+                      <span class="prefix">+91</span>
+                      <input type="tel" id="f-phone" maxlength="10" placeholder="10-digit mobile" />
+                    </div>
+                    <div class="error-msg">Enter a valid 10-digit phone number</div>
+                  </div>
+
+                  <div class="fluent-field" data-field="parentPhone">
+                    <label for="f-parent-phone">Parent Phone Number</label>
+                    <div class="input-wrap">
+                      <span class="prefix">+91</span>
+                      <input type="tel" id="f-parent-phone" maxlength="10" placeholder="10-digit mobile" />
+                    </div>
+                    <div class="error-msg">Enter a valid 10-digit phone number</div>
+                  </div>
+
+                  <div class="fluent-field full">
+                    <div class="toggle-row">
+                      <div>
+                        <div class="toggle-label">Bus Pass Required</div>
+                        <div class="toggle-desc">Enable to assign a bus route for this student.</div>
+                      </div>
+                      <div class="toggle" id="toggle-buspass" role="switch" aria-checked="false" tabindex="0"></div>
+                    </div>
+                  </div>
+
+                  <div class="fluent-field full hidden" id="field-busroute" data-field="busRoute">
+                    <label for="f-route">Bus Route</label>
+                    <div class="input-wrap">
+                      <select id="f-route">
+                        <option value="">Select route</option>
+                        <option>Route 1</option><option>Route 2</option>
+                        <option>Route 3</option><option>Route 4</option>
+                        <option>Route 5</option><option>Route 6</option>
+                        <option>Route 7</option><option>Route 8</option>
+                        <option>Route 9</option><option>Route 10</option>
+                      </select>
+                    </div>
+                    <div class="error-msg">Bus route is required when bus pass is enabled</div>
+                  </div>
+
+                  <div class="fluent-field full">
+                    <div class="toggle-row">
+                      <div>
+                        <div class="toggle-label">Hostel Resident</div>
+                        <div class="toggle-desc">Toggle on if the student stays in campus hostel.</div>
+                      </div>
+                      <div class="toggle" id="toggle-hostel" role="switch" aria-checked="false" tabindex="0"></div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="btn btn-secondary" id="btn-cancel">Cancel</button>
+                  <button type="submit" class="btn btn-primary">Confirm</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Placeholder views -->
+        <div class="view hidden" id="view-buspass">
+          <div class="card"><div class="card-body"><h2 class="card-title">Bus Pass</h2><p style="color:var(--color-text-secondary);margin-top:8px;">Bus pass management module coming soon.</p></div></div>
+        </div>
+        <div class="view hidden" id="view-gate">
+          <div class="card"><div class="card-body"><h2 class="card-title">Gate Entry</h2><p style="color:var(--color-text-secondary);margin-top:8px;">Gate entry logs and controls coming soon.</p></div></div>
+        </div>
+        <div class="view hidden" id="view-reports">
+          <div class="card"><div class="card-body"><h2 class="card-title">Reports</h2><p style="color:var(--color-text-secondary);margin-top:8px;">Analytics and exports coming soon.</p></div></div>
+        </div>
+        <div class="view hidden" id="view-settings">
+          <div class="card"><div class="card-body"><h2 class="card-title">Settings</h2><p style="color:var(--color-text-secondary);margin-top:8px;">Account and system settings coming soon.</p></div></div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</section>
+
+<script>
+/* =========================================================
+   CONFIG — hardcoded admin credentials
+   TODO: replace with backend auth when database is wired up.
+   ========================================================= */
+const ADMIN_CREDENTIALS = { username: "admin", password: "flex2024" };
+const SESSION_KEY = "flex.session";
+
+/* =========================================================
+   ROUTER — show/hide top-level pages
+   ========================================================= */
+function showPage(pageId) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(pageId).classList.add("active");
+}
+
+function showView(viewName) {
+  // Highlight nav
+  document.querySelectorAll(".nav-item").forEach(n => {
+    n.classList.toggle("active", n.dataset.view === viewName);
+  });
+  // Show target view
+  document.querySelectorAll(".view").forEach(v => v.classList.add("hidden"));
+  const target = document.getElementById("view-" + viewName);
+  if (target) target.classList.remove("hidden");
+  // Update page title
+  const titles = {
+    dashboard: "Dashboard",
+    students: "Students",
+    buspass: "Bus Pass",
+    gate: "Gate Entry",
+    reports: "Reports",
+    settings: "Settings",
+  };
+  document.getElementById("current-page-title").textContent = titles[viewName] || "Dashboard";
+}
+
+/* =========================================================
+   AUTH — session in localStorage
+   TODO: replace with real token-based auth when backend is added.
+   ========================================================= */
+function isAuthenticated() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
+    return !!(s && s.user);
+  } catch { return false; }
+}
+
+function signIn(username) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify({
+    user: username,
+    loggedInAt: new Date().toISOString(),
+  }));
+}
+
+function signOut() {
+  localStorage.removeItem(SESSION_KEY);
+  showPage("page-login");
+  toast("success", "Signed out", "You have been signed out successfully.");
+}
+
+function route() {
+  if (isAuthenticated()) {
+    const session = JSON.parse(localStorage.getItem(SESSION_KEY));
+    document.getElementById("sidebar-username").textContent = session.user;
+    const initial = (session.user || "A").charAt(0).toUpperCase();
+    document.getElementById("sidebar-avatar").textContent = initial;
+    document.getElementById("topbar-avatar").textContent = initial;
+    showPage("page-app");
+    showView("dashboard");
+  } else {
+    showPage("page-login");
+  }
+}
+
+/* =========================================================
+   TOAST NOTIFICATION SYSTEM
+   ========================================================= */
+const TOAST_ICONS = {
+  success: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm4 6.3l-5 5a1 1 0 01-1.4 0l-2.6-2.6a1 1 0 111.4-1.4L8.3 11 12.6 7a1 1 0 111.4 1.4z"/></svg>',
+  error:   '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm3.5 10.1a1 1 0 01-1.4 1.4L10 11.4l-2.1 2.1a1 1 0 11-1.4-1.4L8.6 10 6.5 7.9a1 1 0 111.4-1.4L10 8.6l2.1-2.1a1 1 0 111.4 1.4L11.4 10l2.1 2.1z"/></svg>',
+  warning: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 4a1 1 0 011 1v4a1 1 0 11-2 0V7a1 1 0 011-1zm0 9a1.2 1.2 0 110-2.4 1.2 1.2 0 010 2.4z"/></svg>',
+  info:    '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 4a1.2 1.2 0 110 2.4A1.2 1.2 0 0110 6zm1 8.5a1 1 0 11-2 0v-4a1 1 0 112 0v4z"/></svg>',
+};
+function toast(type, title, message, timeout = 3500) {
+  const container = document.getElementById("toast-container");
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  el.innerHTML = `
+    <div class="toast-icon">${TOAST_ICONS[type] || TOAST_ICONS.info}</div>
+    <div class="toast-body"><span class="toast-title"></span><span class="toast-message"></span></div>
+    <button class="toast-close" aria-label="Dismiss">
+      <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5"/></svg>
+    </button>`;
+  // Safe text injection (avoid XSS).
+  el.querySelector(".toast-title").textContent = title;
+  el.querySelector(".toast-message").textContent = message;
+  container.appendChild(el);
+  const remove = () => {
+    el.classList.add("hide");
+    setTimeout(() => el.remove(), 220);
+  };
+  el.querySelector(".toast-close").addEventListener("click", remove);
+  if (timeout) setTimeout(remove, timeout);
+}
+
+/* =========================================================
+   LOGIN — form handler
+   ========================================================= */
+function setFieldValid(fieldEl, valid, message) {
+  fieldEl.classList.toggle("invalid", !valid);
+  if (!valid && message) {
+    const msg = fieldEl.querySelector(".error-msg");
+    if (msg) msg.textContent = message;
+  }
+}
+
+document.getElementById("toggle-password").addEventListener("click", () => {
+  const input = document.getElementById("login-password");
+  input.type = input.type === "password" ? "text" : "password";
+});
+
+document.getElementById("forgot-link").addEventListener("click", (e) => {
+  e.preventDefault();
+  toast("info", "Password reset", "Please contact your campus admin to reset your password.");
+});
+
+document.getElementById("login-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const userField = document.getElementById("field-username");
+  const passField = document.getElementById("field-password");
+  const username = document.getElementById("login-username").value.trim();
+  const password = document.getElementById("login-password").value;
+
+  let ok = true;
+  if (!username) { setFieldValid(userField, false, "Username is required"); ok = false; }
+  else setFieldValid(userField, true);
+  if (!password) { setFieldValid(passField, false, "Password is required"); ok = false; }
+  else setFieldValid(passField, true);
+  if (!ok) return;
+
+  // TODO: replace with real backend auth call
+  if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+    signIn(username);
+    toast("success", "Welcome back", "Signed in successfully.");
+    setTimeout(route, 300);
+  } else {
+    setFieldValid(userField, false, "Invalid credentials");
+    setFieldValid(passField, false, "Invalid credentials");
+    toast("error", "Sign-in failed", "Invalid username or password.");
+  }
+});
+
+/* =========================================================
+   SIDEBAR NAVIGATION
+   ========================================================= */
+document.getElementById("sidebar-nav").addEventListener("click", (e) => {
+  const item = e.target.closest(".nav-item");
+  if (!item) return;
+  showView(item.dataset.view);
+});
+
+document.getElementById("btn-logout").addEventListener("click", signOut);
+
+// Breadcrumb links within views
+document.addEventListener("click", (e) => {
+  const link = e.target.closest("[data-view-link]");
+  if (link) {
+    e.preventDefault();
+    showView(link.dataset.viewLink);
+  }
+});
+
+/* =========================================================
+   TOGGLE SWITCHES
+   ========================================================= */
+function initToggle(toggleEl, onChange) {
+  const setState = (on) => {
+    toggleEl.classList.toggle("on", on);
+    toggleEl.setAttribute("aria-checked", on ? "true" : "false");
+    if (onChange) onChange(on);
+  };
+  toggleEl.addEventListener("click", () => setState(!toggleEl.classList.contains("on")));
+  toggleEl.addEventListener("keydown", (e) => {
+    if (e.key === " " || e.key === "Enter") { e.preventDefault(); setState(!toggleEl.classList.contains("on")); }
+  });
+  return setState;
+}
+
+const setBusPass = initToggle(document.getElementById("toggle-buspass"), (on) => {
+  const routeField = document.getElementById("field-busroute");
+  routeField.classList.toggle("hidden", !on);
+  if (!on) {
+    document.getElementById("f-route").value = "";
+    routeField.classList.remove("invalid");
+  }
+});
+const setHostel = initToggle(document.getElementById("toggle-hostel"));
+
+/* =========================================================
+   STUDENT ENROLLMENT — validation + submit
+   ========================================================= */
+const enrollForm = document.getElementById("enroll-form");
+const enrollFields = () => enrollForm.querySelectorAll(".fluent-field[data-field]");
+
+function resetEnrollForm() {
+  enrollForm.reset();
+  enrollFields().forEach(f => f.classList.remove("invalid"));
+  // reset toggles
+  document.getElementById("toggle-buspass").classList.remove("on");
+  document.getElementById("toggle-buspass").setAttribute("aria-checked", "false");
+  document.getElementById("toggle-hostel").classList.remove("on");
+  document.getElementById("toggle-hostel").setAttribute("aria-checked", "false");
+  document.getElementById("field-busroute").classList.add("hidden");
+}
+
+function validateEnroll() {
+  const get = (id) => document.getElementById(id).value.trim();
+  const fullName = get("f-fullname");
+  const rollNumber = get("f-roll");
+  const cls = get("f-class");
+  const section = get("f-section");
+  const dept = get("f-dept");
+  const phone = get("f-phone");
+  const parentPhone = get("f-parent-phone");
+  const busPass = document.getElementById("toggle-buspass").classList.contains("on");
+  const hostel = document.getElementById("toggle-hostel").classList.contains("on");
+  const busRoute = get("f-route");
+
+  const checks = [
+    { key: "fullName",    ok: fullName.length > 0, msg: "Full name is required" },
+    { key: "rollNumber",  ok: /^[A-Za-z0-9]+$/.test(rollNumber), msg: rollNumber ? "Roll number must be alphanumeric only" : "Roll number is required" },
+    { key: "class",       ok: cls.length > 0,     msg: "Class is required" },
+    { key: "section",     ok: section.length > 0, msg: "Section is required" },
+    { key: "department",  ok: dept.length > 0,    msg: "Department is required" },
+    { key: "phone",       ok: /^\d{10}$/.test(phone),        msg: "Enter a valid 10-digit phone number" },
+    { key: "parentPhone", ok: /^\d{10}$/.test(parentPhone),  msg: "Enter a valid 10-digit phone number" },
+  ];
+  if (busPass) {
+    checks.push({ key: "busRoute", ok: busRoute.length > 0, msg: "Bus route is required when bus pass is enabled" });
+  }
+
+  let allValid = true;
+  checks.forEach(c => {
+    const field = enrollForm.querySelector(`.fluent-field[data-field="${c.key}"]`);
+    if (!field) return;
+    setFieldValid(field, c.ok, c.msg);
+    if (!c.ok) allValid = false;
+  });
+
+  return allValid ? { fullName, rollNumber, class: cls, section, department: dept, phone, parentPhone, busPass, busRoute: busPass ? busRoute : null, hostel } : null;
+}
+
+// Live-clear errors as the user types
+enrollForm.addEventListener("input", (e) => {
+  const field = e.target.closest(".fluent-field");
+  if (field && field.classList.contains("invalid")) field.classList.remove("invalid");
+});
+
+// Phone number inputs: only digits
+["f-phone", "f-parent-phone"].forEach(id => {
+  document.getElementById(id).addEventListener("input", (e) => {
+    e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
+  });
+});
+
+enrollForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const data = validateEnroll();
+  if (!data) {
+    toast("error", "Please fix errors", "Some fields need attention before submitting.");
+    return;
+  }
+
+  // TODO: replace this with an API call to persist the student record.
+  // Example: await fetch('/api/students', { method: 'POST', body: JSON.stringify(data) })
+  console.log("[Flex] Student enrollment submitted:", data);
+
+  toast("success", "Student enrolled successfully", `${data.fullName} (${data.rollNumber}) has been added.`);
+  resetEnrollForm();
+});
+
+document.getElementById("btn-cancel").addEventListener("click", () => {
+  resetEnrollForm();
+  toast("info", "Form cleared", "All fields have been reset.");
+});
+
+/* =========================================================
+   INITIAL ROUTE
+   ========================================================= */
+route();
+</script>
+</body>
+</html>
