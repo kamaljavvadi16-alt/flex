@@ -619,6 +619,218 @@
     border-top: 1px solid var(--color-border);
   }
 
+  /* Clickable stat card + filter bar */
+  .stat-card.clickable { cursor: pointer; }
+  .stat-card.active {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 1px var(--color-primary), var(--shadow-md);
+  }
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--color-border);
+    background: #FAFAFA;
+    align-items: flex-end;
+  }
+  .filter-field label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--color-text-secondary);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .filter-bar select,
+  .filter-bar input {
+    border: 1px solid var(--color-border-strong);
+    background: var(--color-surface);
+    padding: 6px 10px;
+    font-size: 13px;
+    min-width: 180px;
+    outline: none;
+    transition: border-color var(--transition);
+    font-family: inherit;
+  }
+  .filter-bar select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%23605E5C' d='M4 6l4 4 4-4z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 26px;
+    cursor: pointer;
+  }
+  .filter-bar select:focus,
+  .filter-bar input:focus { border-color: var(--color-primary); }
+  .filter-bar .filter-count {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    align-self: center;
+  }
+  .empty-row td {
+    text-align: center;
+    padding: 28px 16px;
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  /* Clickable row links (roll/name in tables) */
+  .row-link {
+    color: var(--color-primary);
+    cursor: pointer;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .row-link:hover { text-decoration: underline; }
+
+  /* Class card grid (shown when detail mode == "cards") */
+  .class-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    padding: 20px;
+  }
+  .class-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 20px;
+    cursor: pointer;
+    transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .class-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+  .class-card h3 { margin: 0; font-size: 16px; color: var(--color-text); }
+  .class-card .class-count {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--color-primary);
+    line-height: 1.1;
+  }
+  .class-card .class-desc {
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+
+  /* Row-cap note (shown under capped tables) */
+  .cap-row td {
+    text-align: center;
+    padding: 10px 16px;
+    color: var(--color-text-muted);
+    font-size: 12px;
+    font-style: italic;
+    background: #FAFAFA;
+  }
+
+  /* Student detail modal */
+  .modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .modal.hidden { display: none !important; }
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    animation: fadeIn 180ms ease;
+  }
+  .modal-card {
+    position: relative;
+    background: var(--color-surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 220ms cubic-bezier(0.1, 0.9, 0.2, 1);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(16px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .modal-header h2 { margin: 0; font-size: 16px; font-weight: 600; }
+  .modal-body {
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .modal-identity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 16px;
+  }
+  .avatar.avatar-lg { width: 48px; height: 48px; font-size: 18px; }
+  .modal-name { font-size: 16px; font-weight: 600; color: var(--color-text); }
+  .modal-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 24px;
+  }
+  .detail-item { display: flex; flex-direction: column; }
+  .detail-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    letter-spacing: 0.3px;
+    margin-bottom: 2px;
+    font-weight: 600;
+  }
+  .detail-value { color: var(--color-text); font-size: 13px; font-weight: 500; }
+  .modal-section {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-border);
+  }
+  .modal-section h3 {
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .modal-line {
+    font-size: 13px;
+    padding: 6px 0;
+    color: var(--color-text);
+    border-bottom: 1px dashed var(--color-border);
+  }
+  .modal-line:last-child { border-bottom: none; }
+
+  @media (max-width: 600px) {
+    .modal-card { max-width: 100%; }
+    .detail-grid { grid-template-columns: 1fr; }
+    .filter-bar select, .filter-bar input { min-width: 140px; flex: 1; }
+  }
+
   /* Hidden util */
   .hidden { display: none !important; }
 
@@ -704,6 +916,22 @@
      TOAST CONTAINER
      ========================================================= -->
 <div id="toast-container"></div>
+
+<!-- =========================================================
+     STUDENT DETAIL MODAL (opened by clicking Roll/Name cells)
+     ========================================================= -->
+<div id="student-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-overlay" id="modal-overlay"></div>
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2 id="modal-title">Student Details</h2>
+      <button class="icon-button" id="modal-close" aria-label="Close">
+        <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
 
 <!-- =========================================================
      PAGE 1 — LOGIN
@@ -796,7 +1024,7 @@
         <h1 class="page-title" id="current-page-title">Dashboard</h1>
         <div class="topbar-search">
           <svg viewBox="0 0 20 20" fill="currentColor"><path d="M13 12.3l4.3 4.3a1 1 0 01-1.4 1.4L11.6 13.7a6 6 0 111.4-1.4zM8 13A5 5 0 108 3a5 5 0 000 10z"/></svg>
-          <input type="text" placeholder="Search students, passes, reports..." />
+          <input type="text" id="topbar-search-input" placeholder="Search roll no, name, or class (e.g. &quot;Third Year&quot;)..." />
         </div>
         <div class="topbar-actions">
           <button class="icon-button" title="Notifications">
@@ -811,117 +1039,67 @@
         <!-- Dashboard view -->
         <div class="view" id="view-dashboard">
           <div class="stats-grid">
-            <div class="stat-card">
+            <div class="stat-card clickable active" data-detail="students">
               <div class="stat-head">
                 <div>
-                  <div class="stat-value">1,248</div>
+                  <div class="stat-value" id="stat-total-students">0</div>
                   <div class="stat-label">Total Students</div>
                 </div>
                 <div class="stat-icon">
                   <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm0 8.5c-3.6 0-6.5 1.9-6.5 4.5v1h13v-1c0-2.6-2.9-4.5-6.5-4.5z"/></svg>
                 </div>
               </div>
-              <div class="stat-trend up">▲ 4.2% vs last month</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card clickable" data-detail="absences">
               <div class="stat-head">
                 <div>
-                  <div class="stat-value">982</div>
-                  <div class="stat-label">Active Bus Passes</div>
+                  <div class="stat-value" id="stat-absent">0</div>
+                  <div class="stat-label">Students Absent in Class</div>
                 </div>
-                <div class="stat-icon green">
-                  <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 2h10a2 2 0 012 2v11a2 2 0 01-1 1.7V18a1 1 0 11-2 0v-1H6v1a1 1 0 11-2 0v-1.3A2 2 0 013 15V4a2 2 0 012-2zm0 2v6h10V4H5z"/></svg>
+                <div class="stat-icon red">
+                  <svg viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a3 3 0 116 0 3 3 0 01-6 0zm3 5.5c-3.6 0-6.5 1.9-6.5 4.5v1h9.2a4.5 4.5 0 014.3-5.9c-1.5-.4-3.5-0.6-7-0.6zm6.5 3a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm-1.9 2.4a.8.8 0 011.1 0l.8.8.8-.8a.8.8 0 111.1 1.1l-.8.8.8.8a.8.8 0 11-1.1 1.1l-.8-.8-.8.8a.8.8 0 11-1.1-1.1l.8-.8-.8-.8a.8.8 0 010-1.1z"/></svg>
                 </div>
               </div>
-              <div class="stat-trend up">▲ 1.8% vs last week</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card clickable" data-detail="entries">
               <div class="stat-head">
                 <div>
-                  <div class="stat-value">3,421</div>
+                  <div class="stat-value" id="stat-entries">0</div>
                   <div class="stat-label">Today's Gate Entries</div>
                 </div>
                 <div class="stat-icon orange">
                   <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 3h4v14H3V3zm10 0h4v14h-4V3zM8 3h4v4H8V3zm0 6h4v2H8V9zm0 4h4v4H8v-4z"/></svg>
                 </div>
               </div>
-              <div class="stat-trend up">▲ 12% vs yesterday</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card clickable" data-detail="pending">
               <div class="stat-head">
                 <div>
-                  <div class="stat-value">14</div>
+                  <div class="stat-value" id="stat-pending">0</div>
                   <div class="stat-label">Pending Approvals</div>
                 </div>
-                <div class="stat-icon red">
-                  <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 4a1 1 0 011 1v4a1 1 0 11-2 0V7a1 1 0 011-1zm0 9a1.2 1.2 0 110-2.4 1.2 1.2 0 010 2.4z"/></svg>
+                <div class="stat-icon green">
+                  <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm-1 3a1 1 0 012 0v4.4l3.1 1.8a1 1 0 11-1 1.7L9.5 11a1 1 0 01-.5-.9V5z"/></svg>
                 </div>
               </div>
-              <div class="stat-trend down">▼ 3 resolved today</div>
             </div>
           </div>
 
-          <div class="card">
+          <div class="card" id="detail-panel">
             <div class="card-header">
-              <h2 class="card-title">Recent Activity</h2>
-              <a href="#" style="font-size:13px;">View all</a>
+              <div>
+                <h2 class="card-title" id="detail-title">Total Students</h2>
+                <div id="detail-subtitle" style="font-size:12px;color:var(--color-text-secondary);margin-top:2px;"></div>
+              </div>
             </div>
-            <div class="table-wrap">
+            <div class="filter-bar" id="detail-filters"></div>
+            <div class="table-wrap" id="detail-table-wrap">
               <table>
-                <thead>
-                  <tr>
-                    <th>Student</th>
-                    <th>Roll No.</th>
-                    <th>Activity</th>
-                    <th>Gate / Route</th>
-                    <th>Status</th>
-                    <th>Time</th>
-                  </tr>
-                </thead>
-                <tbody id="activity-tbody">
-                  <tr>
-                    <td>Aarav Sharma</td>
-                    <td>22CS1042</td>
-                    <td>Gate Entry</td>
-                    <td>Main Gate</td>
-                    <td><span class="badge badge-success">Allowed</span></td>
-                    <td>09:12 AM</td>
-                  </tr>
-                  <tr>
-                    <td>Priya Menon</td>
-                    <td>22EC3019</td>
-                    <td>Bus Boarded</td>
-                    <td>Route 4</td>
-                    <td><span class="badge badge-info">On Trip</span></td>
-                    <td>08:54 AM</td>
-                  </tr>
-                  <tr>
-                    <td>Rohan Patel</td>
-                    <td>23ME2201</td>
-                    <td>Enrollment</td>
-                    <td>—</td>
-                    <td><span class="badge badge-warning">Pending</span></td>
-                    <td>08:40 AM</td>
-                  </tr>
-                  <tr>
-                    <td>Divya R.</td>
-                    <td>21IT1107</td>
-                    <td>Gate Exit</td>
-                    <td>Side Gate</td>
-                    <td><span class="badge badge-success">Allowed</span></td>
-                    <td>08:31 AM</td>
-                  </tr>
-                  <tr>
-                    <td>Karthik V.</td>
-                    <td>22AI4088</td>
-                    <td>Gate Entry</td>
-                    <td>Main Gate</td>
-                    <td><span class="badge badge-danger">Denied</span></td>
-                    <td>08:22 AM</td>
-                  </tr>
-                </tbody>
+                <thead id="detail-thead"></thead>
+                <tbody id="detail-tbody"></tbody>
               </table>
             </div>
+            <div class="class-grid hidden" id="detail-class-grid"></div>
           </div>
         </div>
 
@@ -1086,7 +1264,7 @@
    CONFIG — hardcoded admin credentials
    TODO: replace with backend auth when database is wired up.
    ========================================================= */
-const ADMIN_CREDENTIALS = { username: "admin", password: "flex2024" };
+const ADMIN_CREDENTIALS = { username: "kamal", password: "flex" };
 const SESSION_KEY = "flex.session";
 
 /* =========================================================
@@ -1367,6 +1545,525 @@ document.getElementById("btn-cancel").addEventListener("click", () => {
   resetEnrollForm();
   toast("info", "Form cleared", "All fields have been reset.");
 });
+
+/* =========================================================
+   DASHBOARD — mock data generator + detail rendering
+   TODO: replace MOCK_* arrays with live API fetches:
+     - GET /api/students                → students table
+     - GET /api/gate-entries?date=today → today's entries
+     - GET /api/absences?date=today     → absent-in-class list
+     - GET /api/approvals?status=pending → pending approvals
+     - GET /api/students/:roll          → detail modal
+   ========================================================= */
+const DEPTS    = ["CSE","ECE","EEE","MECH","CIVIL","IT","AIDS","AIML"];
+const SECTIONS = ["A","B","C","D","E"];
+const CLASSES  = ["First Year","Second Year","Third Year","Fourth Year"];
+const DEPT_CODES  = { CSE:"CS", ECE:"EC", EEE:"EE", MECH:"ME", CIVIL:"CE", IT:"IT", AIDS:"AI", AIML:"ML" };
+const YEAR_PREFIX = { "First Year":"24", "Second Year":"23", "Third Year":"22", "Fourth Year":"21" };
+
+const FIRST_NAMES = ["Aarav","Vivaan","Aditya","Arjun","Reyansh","Krishna","Ishaan","Shaurya","Atharv","Vihaan","Rohan","Karan","Dev","Arnav","Yash","Kabir","Veer","Neel","Raghav","Siddharth","Advait","Kunal","Nikhil","Ayaan","Rahul","Pranav","Harsh","Ritvik","Tanishq","Manav","Aadhya","Saanvi","Ananya","Diya","Ishani","Myra","Anika","Kiara","Pari","Riya","Meera","Priya","Divya","Sana","Nithya","Anushka","Tara","Kavya","Navya","Isha","Sneha","Trisha","Avni","Siya","Anvi","Prisha","Aanya","Vanya","Ridhima","Khushi"];
+const LAST_NAMES  = ["Sharma","Patel","Reddy","Iyer","Nair","Menon","Kapoor","Malhotra","Chopra","Gupta","Verma","Singh","Rao","Desai","Bhatt","Mehta","Joshi","Agarwal","Mishra","Pandey","Shah","Kulkarni","Pillai","Kumar","Das","Bose","Chakraborty","Ghosh","Roy","Banerjee","Jain","Sinha","Trivedi","Chauhan","Khan","Qureshi","Naidu","Subramanian","Srinivasan","Venkatesh"];
+const SUBJECTS    = ["DBMS","Operating Systems","Data Structures","Thermodynamics","Cloud Computing","Signals & Systems","Control Systems","Algorithms","Circuit Analysis","Mechanics","Networks","Compiler Design","Machine Learning","Software Engineering"];
+const REASONS     = ["Medical appointment","Family function","Sports event","Interview","Personal","Bank visit","Travel","Hostel work","Emergency"];
+
+const rng = () => Math.random();
+function pick(arr) { return arr[Math.floor(rng() * arr.length)]; }
+function pad(n, w) { return String(n).padStart(w, "0"); }
+function fmtTime(h, m) {
+  const hh = h % 12 === 0 ? 12 : h % 12;
+  const ampm = h < 12 ? "AM" : "PM";
+  return pad(hh, 2) + ":" + pad(m, 2) + " " + ampm;
+}
+function genPhone() { return "9" + pad(Math.floor(rng() * 1e9), 9); }
+
+// Generate ~5000+ students, plus derived entries/absences/pending for today.
+function generateAll() {
+  const students = [];
+  const seqByKey = {};
+  for (const cls of CLASSES) {
+    for (const dept of DEPTS) {
+      for (const section of SECTIONS) {
+        const count = 30 + Math.floor(rng() * 6); // 30-35 per section → ~5200 total
+        for (let i = 0; i < count; i++) {
+          const key = YEAR_PREFIX[cls] + DEPT_CODES[dept];
+          seqByKey[key] = (seqByKey[key] || 1000) + 1;
+          const roll = key + seqByKey[key];
+          const busPass = rng() < 0.6;
+          students.push({
+            roll,
+            name: pick(FIRST_NAMES) + " " + pick(LAST_NAMES),
+            class: cls,
+            section,
+            dept,
+            phone: genPhone(),
+            parentPhone: genPhone(),
+            busPass,
+            busRoute: busPass ? "Route " + (1 + Math.floor(rng() * 10)) : null,
+            hostel: rng() < 0.35,
+          });
+        }
+      }
+    }
+  }
+
+  // Today's gate entries — ~70% of students entered today, some have exits too
+  const entries = [];
+  for (const s of students) {
+    if (rng() < 0.7) {
+      const h = 7 + Math.floor(rng() * 3);
+      const m = Math.floor(rng() * 60);
+      entries.push({
+        roll: s.roll, name: s.name, class: s.class, section: s.section, dept: s.dept,
+        gate: rng() < 0.7 ? "Main Gate" : "Side Gate",
+        direction: "Entry",
+        time: fmtTime(h, m),
+        _ts: h * 60 + m,
+      });
+      if (rng() < 0.3) {
+        const eh = 15 + Math.floor(rng() * 4);
+        const em = Math.floor(rng() * 60);
+        entries.push({
+          roll: s.roll, name: s.name, class: s.class, section: s.section, dept: s.dept,
+          gate: rng() < 0.7 ? "Main Gate" : "Side Gate",
+          direction: "Exit",
+          time: fmtTime(eh, em),
+          _ts: eh * 60 + em,
+        });
+      }
+    }
+  }
+  entries.sort((a, b) => b._ts - a._ts);
+
+  // Absences — ~7% of students who entered are marked absent in one class today
+  const enteredRolls = new Set(entries.filter(e => e.direction === "Entry").map(e => e.roll));
+  const absences = [];
+  for (const s of students) {
+    if (enteredRolls.has(s.roll) && rng() < 0.07) {
+      absences.push({
+        roll: s.roll, name: s.name, class: s.class, section: s.section, dept: s.dept,
+        subject: pick(SUBJECTS),
+        period: "Period " + (1 + Math.floor(rng() * 6)),
+      });
+    }
+  }
+
+  // Pending approvals — ~50 random pending requests
+  const pending = [];
+  for (let i = 0; i < 50; i++) {
+    const s = students[Math.floor(rng() * students.length)];
+    const h = 8 + Math.floor(rng() * 3);
+    const m = Math.floor(rng() * 60);
+    pending.push({
+      roll: s.roll, name: s.name,
+      type: rng() < 0.7 ? "Gate Pass" : "Bus Pass",
+      reason: pick(REASONS),
+      requestedAt: fmtTime(h, m),
+    });
+  }
+
+  return { students, entries, absences, pending };
+}
+
+const DATA = generateAll();
+const MOCK_STUDENTS     = DATA.students;
+const MOCK_GATE_ENTRIES = DATA.entries;
+const MOCK_ABSENCES     = DATA.absences;
+const MOCK_PENDING      = DATA.pending;
+const STUDENT_INDEX     = Object.fromEntries(MOCK_STUDENTS.map(s => [s.roll, s]));
+
+function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+function gv(id) { const el = document.getElementById(id); return el ? el.value : ""; }
+
+function renderStatNumbers() {
+  setText("stat-total-students", MOCK_STUDENTS.length.toLocaleString());
+  setText("stat-absent",         MOCK_ABSENCES.length.toLocaleString());
+  setText("stat-entries",        MOCK_GATE_ENTRIES.length.toLocaleString());
+  setText("stat-pending",        MOCK_PENDING.length.toLocaleString());
+}
+
+// Detail configs — each describes title, filters, columns, and row source.
+const DETAIL_CONFIGS = {
+  students: {
+    title: "Total Students",
+    subtitle: "All enrolled students in the system",
+    filters: [
+      { id: "flt-class",   label: "Class",      options: CLASSES },
+      { id: "flt-section", label: "Section",    options: SECTIONS },
+      { id: "flt-dept",    label: "Department", options: DEPTS },
+      { id: "flt-search",  label: "Search Roll / Name", type: "search", placeholder: "e.g. 22CS1042 or Priya" },
+    ],
+    columns: ["Roll No.","Name","Class","Section","Department","Phone"],
+    rows: () => {
+      const cls = gv("flt-class"), sec = gv("flt-section"), dept = gv("flt-dept");
+      const q = gv("flt-search").trim().toLowerCase();
+      return MOCK_STUDENTS
+        .filter(s => !cls  || s.class   === cls)
+        .filter(s => !sec  || s.section === sec)
+        .filter(s => !dept || s.dept    === dept)
+        .filter(s => !q    || s.roll.toLowerCase().includes(q) || s.name.toLowerCase().includes(q))
+        .map(s => [s.roll, s.name, s.class, s.section, s.dept, "+91 " + s.phone]);
+    },
+  },
+  absences: {
+    title: "Students Absent in Class",
+    subtitle: "Entered the gate today but marked absent in at least one class",
+    filters: [
+      { id: "flt-class",   label: "Class",      options: CLASSES },
+      { id: "flt-section", label: "Section",    options: SECTIONS },
+      { id: "flt-dept",    label: "Department", options: DEPTS },
+      { id: "flt-search",  label: "Search Roll / Name", type: "search", placeholder: "Roll or name..." },
+    ],
+    columns: ["Roll No.","Name","Class","Section","Department","Subject","Period"],
+    rows: () => {
+      const cls = gv("flt-class"), sec = gv("flt-section"), dept = gv("flt-dept");
+      const q = gv("flt-search").trim().toLowerCase();
+      return MOCK_ABSENCES
+        .filter(a => !cls  || a.class   === cls)
+        .filter(a => !sec  || a.section === sec)
+        .filter(a => !dept || a.dept    === dept)
+        .filter(a => !q    || a.roll.toLowerCase().includes(q) || a.name.toLowerCase().includes(q))
+        .map(a => [a.roll, a.name, a.class, a.section, a.dept, a.subject, a.period]);
+    },
+  },
+  entries: {
+    title: "Today's Gate Entries",
+    subtitle: "All gate entries recorded today",
+    filters: [
+      { id: "flt-class",   label: "Class",      options: CLASSES },
+      { id: "flt-section", label: "Section",    options: SECTIONS },
+      { id: "flt-dept",    label: "Department", options: DEPTS },
+      { id: "flt-search",  label: "Search Roll / Name", type: "search", placeholder: "Roll or name..." },
+    ],
+    columns: ["Roll No.","Name","Class","Section","Department","Gate","Direction","Time"],
+    rows: () => {
+      const cls = gv("flt-class"), sec = gv("flt-section"), dept = gv("flt-dept");
+      const q = gv("flt-search").trim().toLowerCase();
+      return MOCK_GATE_ENTRIES
+        .filter(e => !cls  || e.class   === cls)
+        .filter(e => !sec  || e.section === sec)
+        .filter(e => !dept || e.dept    === dept)
+        .filter(e => !q    || e.roll.toLowerCase().includes(q) || e.name.toLowerCase().includes(q))
+        .map(e => [e.roll, e.name, e.class, e.section, e.dept, e.gate, e.direction, e.time]);
+    },
+  },
+  pending: {
+    title: "Pending Approvals",
+    subtitle: "Gate pass requests awaiting review",
+    filters: [
+      { id: "flt-roll", label: "Search by Roll No.", type: "search", placeholder: "e.g. 22CS1042" },
+    ],
+    columns: ["Roll No.","Name","Type","Reason","Requested At","Status"],
+    rows: () => {
+      const q = gv("flt-roll").trim().toLowerCase();
+      return MOCK_PENDING
+        .filter(p => !q || p.roll.toLowerCase().includes(q) || p.name.toLowerCase().includes(q))
+        .map(p => [p.roll, p.name, p.type, p.reason, p.requestedAt, "__BADGE_PENDING__"]);
+    },
+  },
+  classes: {
+    title: "Classes",
+    subtitle: "Select a class to view enrolled students",
+    mode: "cards",
+    cards: () => CLASSES.map(c => ({
+      title: c,
+      count: MOCK_STUDENTS.filter(s => s.class === c).length,
+      desc: DEPTS.length + " departments · " + SECTIONS.length + " sections each",
+      onClick: () => openClassStudents(c),
+    })),
+  },
+};
+
+const MAX_RENDERED_ROWS = 200;
+let currentDetail = "students";
+
+function renderFilters(config) {
+  const bar = document.getElementById("detail-filters");
+  bar.innerHTML = "";
+  bar.classList.toggle("hidden", !config.filters || !config.filters.length);
+  (config.filters || []).forEach(f => {
+    const field = document.createElement("div");
+    field.className = "filter-field";
+    const lbl = document.createElement("label");
+    lbl.textContent = f.label;
+    lbl.htmlFor = f.id;
+    field.appendChild(lbl);
+    if (f.type === "search") {
+      const inp = document.createElement("input");
+      inp.type = "text";
+      inp.id = f.id;
+      inp.placeholder = f.placeholder || "";
+      inp.addEventListener("input", renderDetailRows);
+      field.appendChild(inp);
+    } else {
+      const sel = document.createElement("select");
+      sel.id = f.id;
+      const all = document.createElement("option");
+      all.value = ""; all.textContent = "All";
+      sel.appendChild(all);
+      f.options.forEach(o => {
+        const opt = document.createElement("option");
+        opt.value = o; opt.textContent = o;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener("change", renderDetailRows);
+      field.appendChild(sel);
+    }
+    bar.appendChild(field);
+  });
+  if (config.filters && config.filters.length) {
+    const countEl = document.createElement("span");
+    countEl.className = "filter-count";
+    countEl.id = "filter-count";
+    bar.appendChild(countEl);
+  }
+}
+
+function renderDetailRows() {
+  const config = DETAIL_CONFIGS[currentDetail];
+  const all = config.rows();
+  const tbody = document.getElementById("detail-tbody");
+  tbody.innerHTML = "";
+  const rows = all.slice(0, MAX_RENDERED_ROWS);
+  if (all.length === 0) {
+    const tr = document.createElement("tr");
+    tr.className = "empty-row";
+    const td = document.createElement("td");
+    td.colSpan = config.columns.length;
+    td.textContent = "No records match the current filters.";
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+  } else {
+    rows.forEach(r => {
+      const tr = document.createElement("tr");
+      r.forEach((val, i) => {
+        const td = document.createElement("td");
+        const col = config.columns[i];
+        if (val === "__BADGE_PENDING__") {
+          const badge = document.createElement("span");
+          badge.className = "badge badge-warning";
+          badge.textContent = "Pending";
+          td.appendChild(badge);
+        } else if ((col === "Roll No." || col === "Name") && STUDENT_INDEX[r[0]]) {
+          const a = document.createElement("a");
+          a.href = "#";
+          a.className = "row-link";
+          a.textContent = val;
+          a.addEventListener("click", (e) => { e.preventDefault(); openStudentModal(r[0]); });
+          td.appendChild(a);
+        } else {
+          td.textContent = val;
+        }
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    if (all.length > MAX_RENDERED_ROWS) {
+      const tr = document.createElement("tr");
+      tr.className = "cap-row";
+      const td = document.createElement("td");
+      td.colSpan = config.columns.length;
+      td.textContent = "Showing first " + MAX_RENDERED_ROWS + " of " + all.length.toLocaleString() + " results — refine your filters to narrow down.";
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+    }
+  }
+  const countEl = document.getElementById("filter-count");
+  if (countEl) {
+    countEl.textContent = all.length.toLocaleString() + " record" + (all.length === 1 ? "" : "s");
+  }
+}
+
+function renderClassCards(config) {
+  const grid = document.getElementById("detail-class-grid");
+  grid.innerHTML = "";
+  config.cards().forEach(c => {
+    const card = document.createElement("div");
+    card.className = "class-card";
+    const h = document.createElement("h3"); h.textContent = c.title;
+    const count = document.createElement("div"); count.className = "class-count"; count.textContent = c.count.toLocaleString();
+    const lbl = document.createElement("div"); lbl.className = "stat-label"; lbl.textContent = "students";
+    const desc = document.createElement("div"); desc.className = "class-desc"; desc.textContent = c.desc;
+    card.appendChild(h); card.appendChild(count); card.appendChild(lbl); card.appendChild(desc);
+    card.addEventListener("click", c.onClick);
+    grid.appendChild(card);
+  });
+}
+
+function showDetail(key) {
+  currentDetail = key;
+  const config = DETAIL_CONFIGS[key];
+  setText("detail-title", config.title);
+  setText("detail-subtitle", config.subtitle);
+  document.querySelectorAll(".stat-card[data-detail]").forEach(c => {
+    c.classList.toggle("active", c.dataset.detail === key);
+  });
+  const tableWrap = document.getElementById("detail-table-wrap");
+  const classGrid = document.getElementById("detail-class-grid");
+  if (config.mode === "cards") {
+    tableWrap.classList.add("hidden");
+    classGrid.classList.remove("hidden");
+    document.getElementById("detail-filters").classList.add("hidden");
+    renderClassCards(config);
+  } else {
+    classGrid.classList.add("hidden");
+    tableWrap.classList.remove("hidden");
+    const thead = document.getElementById("detail-thead");
+    thead.innerHTML = "";
+    const headRow = document.createElement("tr");
+    config.columns.forEach(col => {
+      const th = document.createElement("th");
+      th.textContent = col;
+      headRow.appendChild(th);
+    });
+    thead.appendChild(headRow);
+    renderFilters(config);
+    renderDetailRows();
+  }
+}
+
+// Open students filtered by class (used from class cards + header search)
+function openClassStudents(cls) {
+  showDetail("students");
+  const clsFilter = document.getElementById("flt-class");
+  if (clsFilter) {
+    clsFilter.value = cls;
+    renderDetailRows();
+  }
+  setText("detail-title", cls + " — Students");
+  setText("detail-subtitle", MOCK_STUDENTS.filter(s => s.class === cls).length.toLocaleString() + " enrolled in " + cls);
+}
+
+// Wire up stat-card clicks
+document.querySelectorAll(".stat-card[data-detail]").forEach(card => {
+  card.addEventListener("click", () => showDetail(card.dataset.detail));
+});
+
+/* =========================================================
+   STUDENT DETAIL MODAL
+   ========================================================= */
+function openStudentModal(roll) {
+  const s = STUDENT_INDEX[roll];
+  if (!s) return;
+  const body = document.getElementById("modal-body");
+  body.innerHTML = "";
+
+  // Identity block
+  const identity = document.createElement("div");
+  identity.className = "modal-identity";
+  const avatar = document.createElement("div");
+  avatar.className = "avatar avatar-lg";
+  avatar.textContent = (s.name[0] || "?").toUpperCase();
+  const who = document.createElement("div");
+  const name = document.createElement("div"); name.className = "modal-name"; name.textContent = s.name;
+  const sub  = document.createElement("div"); sub.className  = "modal-sub";
+  sub.textContent = s.roll + " · " + s.class + " · " + s.dept + " " + s.section;
+  who.appendChild(name); who.appendChild(sub);
+  identity.appendChild(avatar); identity.appendChild(who);
+  body.appendChild(identity);
+
+  // Detail grid
+  const grid = document.createElement("div");
+  grid.className = "detail-grid";
+  const items = [
+    ["Full Name",       s.name],
+    ["Roll Number",     s.roll],
+    ["Class",           s.class],
+    ["Section",         s.section],
+    ["Department",      s.dept],
+    ["Phone",           "+91 " + s.phone],
+    ["Parent Phone",    "+91 " + s.parentPhone],
+    ["Bus Pass",        s.busPass ? "Yes (" + s.busRoute + ")" : "No"],
+    ["Hostel Resident", s.hostel ? "Yes" : "No"],
+  ];
+  items.forEach(([k, v]) => {
+    const item = document.createElement("div"); item.className = "detail-item";
+    const l = document.createElement("span"); l.className = "detail-label"; l.textContent = k;
+    const val = document.createElement("span"); val.className = "detail-value"; val.textContent = v;
+    item.appendChild(l); item.appendChild(val);
+    grid.appendChild(item);
+  });
+  body.appendChild(grid);
+
+  // Today's gate activity
+  const entriesToday = MOCK_GATE_ENTRIES.filter(e => e.roll === roll);
+  if (entriesToday.length) {
+    const sec = document.createElement("div"); sec.className = "modal-section";
+    const h = document.createElement("h3"); h.textContent = "Today's Gate Activity";
+    sec.appendChild(h);
+    entriesToday.forEach(e => {
+      const line = document.createElement("div");
+      line.className = "modal-line";
+      line.textContent = e.direction + " · " + e.gate + " · " + e.time;
+      sec.appendChild(line);
+    });
+    body.appendChild(sec);
+  }
+
+  // Today's absences
+  const absencesToday = MOCK_ABSENCES.filter(a => a.roll === roll);
+  if (absencesToday.length) {
+    const sec = document.createElement("div"); sec.className = "modal-section";
+    const h = document.createElement("h3"); h.textContent = "Today's Absences";
+    sec.appendChild(h);
+    absencesToday.forEach(a => {
+      const line = document.createElement("div");
+      line.className = "modal-line";
+      line.textContent = a.subject + " · " + a.period;
+      sec.appendChild(line);
+    });
+    body.appendChild(sec);
+  }
+
+  document.getElementById("student-modal").classList.remove("hidden");
+}
+
+function closeStudentModal() {
+  document.getElementById("student-modal").classList.add("hidden");
+}
+
+document.getElementById("modal-close").addEventListener("click", closeStudentModal);
+document.getElementById("modal-overlay").addEventListener("click", closeStudentModal);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeStudentModal(); });
+
+/* =========================================================
+   HEADER SEARCH — responsive: routes query to class view,
+   specific class, or roll/name filter on students list.
+   ========================================================= */
+const HEADER_YEAR_TERMS = [
+  { terms: ["first year", "1st year", "year 1", "1 year"],  cls: "First Year"  },
+  { terms: ["second year","2nd year","year 2","2 year"],    cls: "Second Year" },
+  { terms: ["third year", "3rd year","year 3","3 year"],    cls: "Third Year"  },
+  { terms: ["fourth year","4th year","year 4","4 year","final year"], cls: "Fourth Year" },
+];
+
+function handleHeaderSearch(q) {
+  if (!q) return;
+  const lower = q.toLowerCase();
+  for (const { terms, cls } of HEADER_YEAR_TERMS) {
+    if (terms.some(t => lower.includes(t))) { openClassStudents(cls); return; }
+  }
+  if (/^\s*class(es)?\s*$/.test(lower)) { showDetail("classes"); return; }
+  // Generic roll / name search: route to the Total Students list and apply filter
+  showDetail("students");
+  const searchInput = document.getElementById("flt-search");
+  if (searchInput) {
+    searchInput.value = q;
+    renderDetailRows();
+  }
+}
+
+let headerSearchTimer;
+const topSearchInput = document.getElementById("topbar-search-input");
+if (topSearchInput) {
+  topSearchInput.addEventListener("input", (e) => {
+    clearTimeout(headerSearchTimer);
+    const q = e.target.value.trim();
+    headerSearchTimer = setTimeout(() => handleHeaderSearch(q), 180);
+  });
+}
+
+renderStatNumbers();
+showDetail("students");
 
 /* =========================================================
    INITIAL ROUTE
