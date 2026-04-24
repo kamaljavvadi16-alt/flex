@@ -215,6 +215,7 @@
   }
   .btn-secondary:hover { background: var(--color-bg); box-shadow: var(--shadow-sm); }
   .btn-block { width: 100%; }
+  .btn-sm { min-height: 26px; padding: 3px 12px; font-size: 12px; }
 
   .login-actions { margin-top: 24px; }
   .forgot-link {
@@ -831,6 +832,127 @@
     .filter-bar select, .filter-bar input { min-width: 140px; flex: 1; }
   }
 
+  /* Dashboard analytics layout */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .chart-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 16px 16px 10px;
+    box-shadow: var(--shadow-sm);
+  }
+  .chart-card h3 {
+    margin: 0 0 2px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  .chart-card .chart-sub {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    margin-bottom: 10px;
+  }
+  .chart-svg { width: 100%; height: auto; display: block; }
+  @media (max-width: 900px) { .chart-grid { grid-template-columns: 1fr; } }
+
+  /* Dashboard filter card */
+  .dash-filter-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 16px;
+    padding: 4px 0;
+  }
+  .dash-filter-card .filter-bar { border-bottom: none; background: transparent; }
+
+  /* Generic section panel (used by bus pass, gate, pending, hostel) */
+  .section-panel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-top: 16px;
+  }
+  .section-panel > .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* Bus pass route cards */
+  .bus-route-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+    padding: 18px;
+  }
+  .bus-route-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: box-shadow var(--transition);
+  }
+  .bus-route-card:hover { box-shadow: var(--shadow-md); }
+  .bus-route-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .bus-route-head h3 { margin: 0; font-size: 15px; font-weight: 600; color: var(--color-text); }
+  .route-meta { font-size: 12px; color: var(--color-text-secondary); line-height: 1.7; }
+  .route-meta strong { color: var(--color-text); font-weight: 600; }
+  .capacity-bar {
+    height: 6px;
+    background: var(--color-border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .capacity-fill { height: 100%; background: var(--color-primary); transition: width var(--transition); }
+  .capacity-fill.warn { background: var(--color-warning); }
+  .capacity-fill.full { background: var(--color-danger); }
+
+  /* Search dropdown (topbar) */
+  .topbar-search { position: relative; }
+  .search-suggestions {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    max-height: 340px;
+    overflow-y: auto;
+    z-index: 50;
+  }
+  .search-suggestion {
+    padding: 10px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .search-suggestion:last-child { border-bottom: none; }
+  .search-suggestion:hover { background: var(--color-primary-lighter); }
+  .search-suggestion-main { font-weight: 500; font-size: 13px; color: var(--color-text); }
+  .search-suggestion-sub { font-size: 11px; color: var(--color-text-muted); margin-top: 2px; }
+
   /* Hidden util */
   .hidden { display: none !important; }
 
@@ -997,13 +1119,13 @@
           <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 3h4v14H3V3zm10 0h4v14h-4V3zM8 3h4v4H8V3zm0 6h4v2H8V9zm0 4h4v4H8v-4z"/></svg>
           <span class="nav-label">Gate Entry</span>
         </div>
-        <div class="nav-item" data-view="reports">
-          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 3h9l3 3v11a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm0 5h12M6 11h8M6 14h6" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>
-          <span class="nav-label">Reports</span>
+        <div class="nav-item" data-view="pending">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm-1 3a1 1 0 012 0v4.4l3.1 1.8a1 1 0 11-1 1.7L9.5 11a1 1 0 01-.5-.9V5z"/></svg>
+          <span class="nav-label">Pending Approvals</span>
         </div>
-        <div class="nav-item" data-view="settings">
-          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 6.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm7.4 3a7.6 7.6 0 00-.1-1.2l1.7-1.3-1.8-3-2 .8a7.3 7.3 0 00-2-1.2L13 1.5H7l-.3 2.2a7.3 7.3 0 00-2 1.2l-2-.8-1.8 3 1.7 1.3a7.6 7.6 0 000 2.4L.9 12l1.8 3 2-.8a7.3 7.3 0 002 1.2l.3 2.1h6l.3-2.2a7.3 7.3 0 002-1.2l2 .8 1.8-3-1.7-1.2c0-.4.1-.8.1-1.2z"/></svg>
-          <span class="nav-label">Settings</span>
+        <div class="nav-item" data-view="hostel">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 17h14M4 17V8l6-4 6 4v9M8 11h1v2H8zm3 0h1v2h-1zm-3 4h4v2H8z"/></svg>
+          <span class="nav-label">Hostel</span>
         </div>
       </nav>
       <div class="sidebar-profile">
@@ -1036,70 +1158,33 @@
       </header>
 
       <main class="content">
-        <!-- Dashboard view -->
+        <!-- Dashboard view (analytics only) -->
         <div class="view" id="view-dashboard">
-          <div class="stats-grid">
-            <div class="stat-card clickable active" data-detail="students">
-              <div class="stat-head">
-                <div>
-                  <div class="stat-value" id="stat-total-students">0</div>
-                  <div class="stat-label">Total Students</div>
-                </div>
-                <div class="stat-icon">
-                  <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm0 8.5c-3.6 0-6.5 1.9-6.5 4.5v1h13v-1c0-2.6-2.9-4.5-6.5-4.5z"/></svg>
-                </div>
-              </div>
-            </div>
-            <div class="stat-card clickable" data-detail="absences">
-              <div class="stat-head">
-                <div>
-                  <div class="stat-value" id="stat-absent">0</div>
-                  <div class="stat-label">Students Absent in Class</div>
-                </div>
-                <div class="stat-icon red">
-                  <svg viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a3 3 0 116 0 3 3 0 01-6 0zm3 5.5c-3.6 0-6.5 1.9-6.5 4.5v1h9.2a4.5 4.5 0 014.3-5.9c-1.5-.4-3.5-0.6-7-0.6zm6.5 3a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm-1.9 2.4a.8.8 0 011.1 0l.8.8.8-.8a.8.8 0 111.1 1.1l-.8.8.8.8a.8.8 0 11-1.1 1.1l-.8-.8-.8.8a.8.8 0 11-1.1-1.1l.8-.8-.8-.8a.8.8 0 010-1.1z"/></svg>
-                </div>
-              </div>
-            </div>
-            <div class="stat-card clickable" data-detail="entries">
-              <div class="stat-head">
-                <div>
-                  <div class="stat-value" id="stat-entries">0</div>
-                  <div class="stat-label">Today's Gate Entries</div>
-                </div>
-                <div class="stat-icon orange">
-                  <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 3h4v14H3V3zm10 0h4v14h-4V3zM8 3h4v4H8V3zm0 6h4v2H8V9zm0 4h4v4H8v-4z"/></svg>
-                </div>
-              </div>
-            </div>
-            <div class="stat-card clickable" data-detail="pending">
-              <div class="stat-head">
-                <div>
-                  <div class="stat-value" id="stat-pending">0</div>
-                  <div class="stat-label">Pending Approvals</div>
-                </div>
-                <div class="stat-icon green">
-                  <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm-1 3a1 1 0 012 0v4.4l3.1 1.8a1 1 0 11-1 1.7L9.5 11a1 1 0 01-.5-.9V5z"/></svg>
-                </div>
-              </div>
-            </div>
+          <div class="dash-filter-card">
+            <div class="filter-bar" id="dash-filters"></div>
           </div>
-
-          <div class="card" id="detail-panel">
-            <div class="card-header">
-              <div>
-                <h2 class="card-title" id="detail-title">Total Students</h2>
-                <div id="detail-subtitle" style="font-size:12px;color:var(--color-text-secondary);margin-top:2px;"></div>
-              </div>
+          <div class="kpi-grid" id="dash-kpis"></div>
+          <div class="chart-grid">
+            <div class="chart-card">
+              <h3>Weekly Attendance Trend</h3>
+              <div class="chart-sub">Average attendance % over the last 7 days</div>
+              <div id="chart-attendance"></div>
             </div>
-            <div class="filter-bar" id="detail-filters"></div>
-            <div class="table-wrap" id="detail-table-wrap">
-              <table>
-                <thead id="detail-thead"></thead>
-                <tbody id="detail-tbody"></tbody>
-              </table>
+            <div class="chart-card">
+              <h3>Weekly Gate Pass Approvals</h3>
+              <div class="chart-sub">Approved gate passes per day</div>
+              <div id="chart-approvals"></div>
             </div>
-            <div class="class-grid hidden" id="detail-class-grid"></div>
+            <div class="chart-card">
+              <h3>Students by Department</h3>
+              <div class="chart-sub">Enrollment distribution across departments</div>
+              <div id="chart-dept"></div>
+            </div>
+            <div class="chart-card">
+              <h3>Bus Pass Distribution</h3>
+              <div class="chart-sub">Holders per bus route</div>
+              <div id="chart-buspass"></div>
+            </div>
           </div>
         </div>
 
@@ -1240,18 +1325,90 @@
           </div>
         </div>
 
-        <!-- Placeholder views -->
+        <!-- Bus Pass view -->
         <div class="view hidden" id="view-buspass">
-          <div class="card"><div class="card-body"><h2 class="card-title">Bus Pass</h2><p style="color:var(--color-text-secondary);margin-top:8px;">Bus pass management module coming soon.</p></div></div>
+          <div class="kpi-grid" id="buspass-kpis"></div>
+          <div class="section-panel">
+            <div class="card-header">
+              <h2 class="card-title">Bus Routes</h2>
+            </div>
+            <div class="bus-route-grid" id="bus-route-grid"></div>
+          </div>
+          <div class="section-panel">
+            <div class="card-header">
+              <h2 class="card-title">Bus Pass Holders</h2>
+            </div>
+            <div class="filter-bar" id="buspass-filters"></div>
+            <div class="table-wrap">
+              <table>
+                <thead id="buspass-thead"></thead>
+                <tbody id="buspass-tbody"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
+
+        <!-- Gate Entry view -->
         <div class="view hidden" id="view-gate">
-          <div class="card"><div class="card-body"><h2 class="card-title">Gate Entry</h2><p style="color:var(--color-text-secondary);margin-top:8px;">Gate entry logs and controls coming soon.</p></div></div>
+          <div class="kpi-grid" id="gate-kpis"></div>
+          <div class="section-panel">
+            <div class="card-header">
+              <h2 class="card-title">Today's Gate Entries</h2>
+            </div>
+            <div class="filter-bar" id="gate-filters"></div>
+            <div class="table-wrap">
+              <table>
+                <thead id="gate-thead"></thead>
+                <tbody id="gate-tbody"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
-        <div class="view hidden" id="view-reports">
-          <div class="card"><div class="card-body"><h2 class="card-title">Reports</h2><p style="color:var(--color-text-secondary);margin-top:8px;">Analytics and exports coming soon.</p></div></div>
+
+        <!-- Pending Approvals view -->
+        <div class="view hidden" id="view-pending">
+          <div class="kpi-grid" id="pending-kpis"></div>
+          <div class="section-panel">
+            <div class="card-header">
+              <h2 class="card-title">Pending Approvals</h2>
+            </div>
+            <div class="filter-bar" id="pending-filters"></div>
+            <div class="table-wrap">
+              <table>
+                <thead id="pending-thead"></thead>
+                <tbody id="pending-tbody"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
-        <div class="view hidden" id="view-settings">
-          <div class="card"><div class="card-body"><h2 class="card-title">Settings</h2><p style="color:var(--color-text-secondary);margin-top:8px;">Account and system settings coming soon.</p></div></div>
+
+        <!-- Hostel view -->
+        <div class="view hidden" id="view-hostel">
+          <div class="kpi-grid" id="hostel-kpis"></div>
+          <div class="chart-grid">
+            <div class="chart-card">
+              <h3>Hostel Residents by Department</h3>
+              <div class="chart-sub">Count of hostellers per department</div>
+              <div id="chart-hostel-dept"></div>
+            </div>
+            <div class="chart-card">
+              <h3>Hostel Residents by Year</h3>
+              <div class="chart-sub">Distribution across academic years</div>
+              <div id="chart-hostel-year"></div>
+            </div>
+          </div>
+          <div class="section-panel">
+            <div class="card-header">
+              <h2 class="card-title">Hostel Residents</h2>
+            </div>
+            <div class="filter-bar" id="hostel-filters"></div>
+            <div class="table-wrap">
+              <table>
+                <thead id="hostel-thead"></thead>
+                <tbody id="hostel-tbody"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
       </main>
@@ -1276,24 +1433,30 @@ function showPage(pageId) {
 }
 
 function showView(viewName) {
-  // Highlight nav
   document.querySelectorAll(".nav-item").forEach(n => {
     n.classList.toggle("active", n.dataset.view === viewName);
   });
-  // Show target view
   document.querySelectorAll(".view").forEach(v => v.classList.add("hidden"));
   const target = document.getElementById("view-" + viewName);
   if (target) target.classList.remove("hidden");
-  // Update page title
   const titles = {
     dashboard: "Dashboard",
     students: "Students",
-    buspass: "Bus Pass",
-    gate: "Gate Entry",
-    reports: "Reports",
-    settings: "Settings",
+    buspass:  "Bus Pass",
+    gate:     "Gate Entry",
+    pending:  "Pending Approvals",
+    hostel:   "Hostel",
   };
   document.getElementById("current-page-title").textContent = titles[viewName] || "Dashboard";
+  // Render view-specific data (functions defined later in this script)
+  const r = {
+    dashboard: () => typeof renderDashboard === "function" && renderDashboard(),
+    buspass:   () => typeof renderBusPass   === "function" && renderBusPass(),
+    gate:      () => typeof renderGate      === "function" && renderGate(),
+    pending:   () => typeof renderPending   === "function" && renderPending(),
+    hostel:    () => typeof renderHostel    === "function" && renderHostel(),
+  };
+  if (r[viewName]) r[viewName]();
 }
 
 /* =========================================================
@@ -1674,113 +1837,135 @@ const STUDENT_INDEX     = Object.fromEntries(MOCK_STUDENTS.map(s => [s.roll, s])
 function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
 function gv(id) { const el = document.getElementById(id); return el ? el.value : ""; }
 
-function renderStatNumbers() {
-  setText("stat-total-students", MOCK_STUDENTS.length.toLocaleString());
-  setText("stat-absent",         MOCK_ABSENCES.length.toLocaleString());
-  setText("stat-entries",        MOCK_GATE_ENTRIES.length.toLocaleString());
-  setText("stat-pending",        MOCK_PENDING.length.toLocaleString());
+/* =========================================================
+   BUS ROUTES — dummy route data derived from students' busPass
+   ========================================================= */
+const BUS_ROUTE_DETAILS = (() => {
+  const STOPS = [
+    ["Downtown","Market Square","Tech Park"],
+    ["Railway Station","Central Square","Library"],
+    ["South Zone","Ring Road","East Gate"],
+    ["North Colony","Civic Hall","Stadium"],
+    ["Hospital","River Plaza","West Circle"],
+    ["Airport Road","Innovation Hub","Old Town"],
+    ["Lakeview","Mall Junction","Sunrise Apartments"],
+    ["Highway Point","Ashram Chowk","City Square"],
+    ["Green Park","Rosewood","Tower Arena"],
+    ["East End","Harbor Point","Hillside"],
+  ];
+  const DRIVERS = ["Ramesh K.","Suresh V.","Mahesh P.","Dinesh T.","Raju N.","Venkat G.","Kishore L.","Prakash S.","Anil M.","Srinivas R."];
+  const routes = [];
+  for (let i = 1; i <= 10; i++) {
+    const holders = MOCK_STUDENTS.filter(s => s.busRoute === "Route " + i);
+    routes.push({
+      id: "Route " + i,
+      stops: STOPS[i - 1],
+      driver: DRIVERS[i - 1],
+      driverPhone: genPhone(),
+      vehicle: "TS 09 BK " + (1000 + i * 17),
+      morning: fmtTime(7 + (i % 2), (i * 7) % 60),
+      evening: fmtTime(15 + (i % 3), (i * 13) % 60),
+      capacity: 60,
+      holders: holders.length,
+    });
+  }
+  return routes;
+})();
+
+/* =========================================================
+   SVG CHART HELPERS (line, bar, donut)
+   ========================================================= */
+const SVG_NS = "http://www.w3.org/2000/svg";
+function svgEl(tag, attrs) {
+  const el = document.createElementNS(SVG_NS, tag);
+  for (const k in attrs) el.setAttribute(k, attrs[k]);
+  return el;
 }
 
-// Detail configs — each describes title, filters, columns, and row source.
-const DETAIL_CONFIGS = {
-  students: {
-    title: "Total Students",
-    subtitle: "All enrolled students in the system",
-    filters: [
-      { id: "flt-class",   label: "Class",      options: CLASSES },
-      { id: "flt-section", label: "Section",    options: SECTIONS },
-      { id: "flt-dept",    label: "Department", options: DEPTS },
-      { id: "flt-search",  label: "Search Roll / Name", type: "search", placeholder: "e.g. 22CS1042 or Priya" },
-    ],
-    columns: ["Roll No.","Name","Class","Section","Department","Phone"],
-    rows: () => {
-      const cls = gv("flt-class"), sec = gv("flt-section"), dept = gv("flt-dept");
-      const q = gv("flt-search").trim().toLowerCase();
-      return MOCK_STUDENTS
-        .filter(s => !cls  || s.class   === cls)
-        .filter(s => !sec  || s.section === sec)
-        .filter(s => !dept || s.dept    === dept)
-        .filter(s => !q    || s.roll.toLowerCase().includes(q) || s.name.toLowerCase().includes(q))
-        .map(s => [s.roll, s.name, s.class, s.section, s.dept, "+91 " + s.phone]);
-    },
-  },
-  absences: {
-    title: "Students Absent in Class",
-    subtitle: "Entered the gate today but marked absent in at least one class",
-    filters: [
-      { id: "flt-class",   label: "Class",      options: CLASSES },
-      { id: "flt-section", label: "Section",    options: SECTIONS },
-      { id: "flt-dept",    label: "Department", options: DEPTS },
-      { id: "flt-search",  label: "Search Roll / Name", type: "search", placeholder: "Roll or name..." },
-    ],
-    columns: ["Roll No.","Name","Class","Section","Department","Subject","Period"],
-    rows: () => {
-      const cls = gv("flt-class"), sec = gv("flt-section"), dept = gv("flt-dept");
-      const q = gv("flt-search").trim().toLowerCase();
-      return MOCK_ABSENCES
-        .filter(a => !cls  || a.class   === cls)
-        .filter(a => !sec  || a.section === sec)
-        .filter(a => !dept || a.dept    === dept)
-        .filter(a => !q    || a.roll.toLowerCase().includes(q) || a.name.toLowerCase().includes(q))
-        .map(a => [a.roll, a.name, a.class, a.section, a.dept, a.subject, a.period]);
-    },
-  },
-  entries: {
-    title: "Today's Gate Entries",
-    subtitle: "All gate entries recorded today",
-    filters: [
-      { id: "flt-class",   label: "Class",      options: CLASSES },
-      { id: "flt-section", label: "Section",    options: SECTIONS },
-      { id: "flt-dept",    label: "Department", options: DEPTS },
-      { id: "flt-search",  label: "Search Roll / Name", type: "search", placeholder: "Roll or name..." },
-    ],
-    columns: ["Roll No.","Name","Class","Section","Department","Gate","Direction","Time"],
-    rows: () => {
-      const cls = gv("flt-class"), sec = gv("flt-section"), dept = gv("flt-dept");
-      const q = gv("flt-search").trim().toLowerCase();
-      return MOCK_GATE_ENTRIES
-        .filter(e => !cls  || e.class   === cls)
-        .filter(e => !sec  || e.section === sec)
-        .filter(e => !dept || e.dept    === dept)
-        .filter(e => !q    || e.roll.toLowerCase().includes(q) || e.name.toLowerCase().includes(q))
-        .map(e => [e.roll, e.name, e.class, e.section, e.dept, e.gate, e.direction, e.time]);
-    },
-  },
-  pending: {
-    title: "Pending Approvals",
-    subtitle: "Gate pass requests awaiting review",
-    filters: [
-      { id: "flt-roll", label: "Search by Roll No.", type: "search", placeholder: "e.g. 22CS1042" },
-    ],
-    columns: ["Roll No.","Name","Type","Reason","Requested At","Status"],
-    rows: () => {
-      const q = gv("flt-roll").trim().toLowerCase();
-      return MOCK_PENDING
-        .filter(p => !q || p.roll.toLowerCase().includes(q) || p.name.toLowerCase().includes(q))
-        .map(p => [p.roll, p.name, p.type, p.reason, p.requestedAt, "__BADGE_PENDING__"]);
-    },
-  },
-  classes: {
-    title: "Classes",
-    subtitle: "Select a class to view enrolled students",
-    mode: "cards",
-    cards: () => CLASSES.map(c => ({
-      title: c,
-      count: MOCK_STUDENTS.filter(s => s.class === c).length,
-      desc: DEPTS.length + " departments · " + SECTIONS.length + " sections each",
-      onClick: () => openClassStudents(c),
-    })),
-  },
-};
+function renderLineChart(container, data, opts) {
+  container.innerHTML = "";
+  opts = opts || {};
+  const W = 640, H = 220, pad = { l: 44, r: 16, t: 18, b: 32 };
+  const iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
+  const values = data.map(d => d.value);
+  const dataMax = Math.max.apply(null, values.concat([1]));
+  const dataMin = Math.min.apply(null, values);
+  const max = opts.max != null ? opts.max : dataMax * 1.15;
+  const min = opts.min != null ? opts.min : Math.max(0, dataMin - (dataMax - dataMin) * 0.3);
+  const xStep = iw / Math.max(1, data.length - 1);
+  const y = v => pad.t + ih - ((v - min) / Math.max(0.001, (max - min))) * ih;
+  const svg = svgEl("svg", { class: "chart-svg", viewBox: "0 0 " + W + " " + H, preserveAspectRatio: "xMidYMid meet" });
 
+  for (let i = 0; i <= 4; i++) {
+    const gy = pad.t + (ih * i / 4);
+    svg.appendChild(svgEl("line", { x1: pad.l, x2: W - pad.r, y1: gy, y2: gy, stroke: "#EDEBE9", "stroke-width": 1 }));
+    const lbl = min + (max - min) * (1 - i / 4);
+    const t = svgEl("text", { x: pad.l - 6, y: gy + 3, "font-size": 10, fill: "#8A8886", "text-anchor": "end" });
+    t.textContent = Math.round(lbl) + (opts.yUnit || "");
+    svg.appendChild(t);
+  }
+
+  const color = opts.color || "#0078D4";
+  const pts = data.map((d, i) => [pad.l + i * xStep, y(d.value)]);
+  const pathD = pts.map((p, i) => (i === 0 ? "M" : "L") + p[0] + "," + p[1]).join(" ");
+  const areaD = pathD + " L" + pts[pts.length - 1][0] + "," + (pad.t + ih) + " L" + pts[0][0] + "," + (pad.t + ih) + " Z";
+  svg.appendChild(svgEl("path", { d: areaD, fill: color, "fill-opacity": 0.10 }));
+  svg.appendChild(svgEl("path", { d: pathD, fill: "none", stroke: color, "stroke-width": 2 }));
+
+  data.forEach((d, i) => {
+    svg.appendChild(svgEl("circle", { cx: pts[i][0], cy: pts[i][1], r: 3.5, fill: color }));
+    const t = svgEl("text", { x: pts[i][0], y: H - pad.b + 16, "font-size": 11, fill: "#605E5C", "text-anchor": "middle" });
+    t.textContent = d.label;
+    svg.appendChild(t);
+  });
+
+  container.appendChild(svg);
+}
+
+function renderBarChart(container, data, opts) {
+  container.innerHTML = "";
+  opts = opts || {};
+  const W = 640, H = 220, pad = { l: 44, r: 16, t: 18, b: 40 };
+  const iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
+  const max = Math.max.apply(null, data.map(d => d.value).concat([1])) * 1.15;
+  const bandW = iw / Math.max(1, data.length);
+  const barW = Math.min(bandW * 0.62, 44);
+  const y = v => pad.t + ih - (v / max) * ih;
+  const svg = svgEl("svg", { class: "chart-svg", viewBox: "0 0 " + W + " " + H, preserveAspectRatio: "xMidYMid meet" });
+
+  for (let i = 0; i <= 4; i++) {
+    const gy = pad.t + (ih * i / 4);
+    svg.appendChild(svgEl("line", { x1: pad.l, x2: W - pad.r, y1: gy, y2: gy, stroke: "#EDEBE9", "stroke-width": 1 }));
+    const lbl = max * (1 - i / 4);
+    const t = svgEl("text", { x: pad.l - 6, y: gy + 3, "font-size": 10, fill: "#8A8886", "text-anchor": "end" });
+    t.textContent = Math.round(lbl);
+    svg.appendChild(t);
+  }
+
+  const color = opts.color || "#0078D4";
+  data.forEach((d, i) => {
+    const cx = pad.l + i * bandW + bandW / 2;
+    const by = y(d.value);
+    svg.appendChild(svgEl("rect", { x: cx - barW / 2, y: by, width: barW, height: pad.t + ih - by, fill: color, rx: 2 }));
+    const vt = svgEl("text", { x: cx, y: by - 4, "font-size": 10, fill: "#201F1E", "text-anchor": "middle", "font-weight": 600 });
+    vt.textContent = d.value;
+    svg.appendChild(vt);
+    const lt = svgEl("text", { x: cx, y: H - pad.b + 16, "font-size": 11, fill: "#605E5C", "text-anchor": "middle" });
+    lt.textContent = d.label;
+    svg.appendChild(lt);
+  });
+
+  container.appendChild(svg);
+}
+
+/* =========================================================
+   FILTER / TABLE / KPI HELPERS (shared across section pages)
+   ========================================================= */
 const MAX_RENDERED_ROWS = 200;
-let currentDetail = "students";
 
-function renderFilters(config) {
-  const bar = document.getElementById("detail-filters");
-  bar.innerHTML = "";
-  bar.classList.toggle("hidden", !config.filters || !config.filters.length);
-  (config.filters || []).forEach(f => {
+function buildFilterBar(container, filters, onChange) {
+  container.innerHTML = "";
+  filters.forEach(f => {
     const field = document.createElement("div");
     field.className = "filter-field";
     const lbl = document.createElement("label");
@@ -1789,10 +1974,8 @@ function renderFilters(config) {
     field.appendChild(lbl);
     if (f.type === "search") {
       const inp = document.createElement("input");
-      inp.type = "text";
-      inp.id = f.id;
-      inp.placeholder = f.placeholder || "";
-      inp.addEventListener("input", renderDetailRows);
+      inp.type = "text"; inp.id = f.id; inp.placeholder = f.placeholder || "";
+      inp.addEventListener("input", onChange);
       field.appendChild(inp);
     } else {
       const sel = document.createElement("select");
@@ -1805,138 +1988,516 @@ function renderFilters(config) {
         opt.value = o; opt.textContent = o;
         sel.appendChild(opt);
       });
-      sel.addEventListener("change", renderDetailRows);
+      sel.addEventListener("change", onChange);
       field.appendChild(sel);
     }
-    bar.appendChild(field);
+    container.appendChild(field);
   });
-  if (config.filters && config.filters.length) {
-    const countEl = document.createElement("span");
-    countEl.className = "filter-count";
-    countEl.id = "filter-count";
-    bar.appendChild(countEl);
-  }
+  const count = document.createElement("span");
+  count.className = "filter-count";
+  container.appendChild(count);
 }
 
-function renderDetailRows() {
-  const config = DETAIL_CONFIGS[currentDetail];
-  const all = config.rows();
-  const tbody = document.getElementById("detail-tbody");
-  tbody.innerHTML = "";
-  const rows = all.slice(0, MAX_RENDERED_ROWS);
-  if (all.length === 0) {
-    const tr = document.createElement("tr");
-    tr.className = "empty-row";
-    const td = document.createElement("td");
-    td.colSpan = config.columns.length;
-    td.textContent = "No records match the current filters.";
-    tr.appendChild(td);
-    tbody.appendChild(tr);
-  } else {
-    rows.forEach(r => {
-      const tr = document.createElement("tr");
-      r.forEach((val, i) => {
-        const td = document.createElement("td");
-        const col = config.columns[i];
-        if (val === "__BADGE_PENDING__") {
-          const badge = document.createElement("span");
-          badge.className = "badge badge-warning";
-          badge.textContent = "Pending";
-          td.appendChild(badge);
-        } else if ((col === "Roll No." || col === "Name") && STUDENT_INDEX[r[0]]) {
-          const a = document.createElement("a");
-          a.href = "#";
-          a.className = "row-link";
-          a.textContent = val;
-          a.addEventListener("click", (e) => { e.preventDefault(); openStudentModal(r[0]); });
-          td.appendChild(a);
-        } else {
-          td.textContent = val;
-        }
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
-    });
-    if (all.length > MAX_RENDERED_ROWS) {
-      const tr = document.createElement("tr");
-      tr.className = "cap-row";
-      const td = document.createElement("td");
-      td.colSpan = config.columns.length;
-      td.textContent = "Showing first " + MAX_RENDERED_ROWS + " of " + all.length.toLocaleString() + " results — refine your filters to narrow down.";
-      tr.appendChild(td);
-      tbody.appendChild(tr);
-    }
-  }
-  const countEl = document.getElementById("filter-count");
-  if (countEl) {
-    countEl.textContent = all.length.toLocaleString() + " record" + (all.length === 1 ? "" : "s");
-  }
+function updateCount(barEl, n) {
+  const c = barEl.querySelector(".filter-count");
+  if (c) c.textContent = n.toLocaleString() + " record" + (n === 1 ? "" : "s");
 }
 
-function renderClassCards(config) {
-  const grid = document.getElementById("detail-class-grid");
-  grid.innerHTML = "";
-  config.cards().forEach(c => {
+function renderKPI(container, items) {
+  container.innerHTML = "";
+  items.forEach(k => {
     const card = document.createElement("div");
-    card.className = "class-card";
-    const h = document.createElement("h3"); h.textContent = c.title;
-    const count = document.createElement("div"); count.className = "class-count"; count.textContent = c.count.toLocaleString();
-    const lbl = document.createElement("div"); lbl.className = "stat-label"; lbl.textContent = "students";
-    const desc = document.createElement("div"); desc.className = "class-desc"; desc.textContent = c.desc;
-    card.appendChild(h); card.appendChild(count); card.appendChild(lbl); card.appendChild(desc);
-    card.addEventListener("click", c.onClick);
+    card.className = "stat-card";
+    card.innerHTML =
+      '<div class="stat-head">' +
+        '<div><div class="stat-value"></div><div class="stat-label"></div></div>' +
+        '<div class="stat-icon ' + (k.color || "") + '"></div>' +
+      '</div>';
+    card.querySelector(".stat-value").textContent = k.value;
+    card.querySelector(".stat-label").textContent = k.label;
+    card.querySelector(".stat-icon").innerHTML = k.icon || '';
+    container.appendChild(card);
+  });
+}
+
+function renderTable(theadEl, tbodyEl, columns, rows) {
+  theadEl.innerHTML = "";
+  const headRow = document.createElement("tr");
+  columns.forEach(c => {
+    const th = document.createElement("th");
+    th.textContent = c.label;
+    headRow.appendChild(th);
+  });
+  theadEl.appendChild(headRow);
+
+  tbodyEl.innerHTML = "";
+  if (!rows.length) {
+    const tr = document.createElement("tr"); tr.className = "empty-row";
+    const td = document.createElement("td"); td.colSpan = columns.length;
+    td.textContent = "No records match the current filters.";
+    tr.appendChild(td); tbodyEl.appendChild(tr);
+    return;
+  }
+  rows.slice(0, MAX_RENDERED_ROWS).forEach(row => {
+    const tr = document.createElement("tr");
+    columns.forEach(col => {
+      const td = document.createElement("td");
+      if (col.render) { col.render(td, row); }
+      else if (col.type === "roll" || col.type === "name") {
+        const val = row[col.key];
+        if (STUDENT_INDEX[row.roll]) {
+          const a = document.createElement("a");
+          a.href = "#"; a.className = "row-link";
+          a.textContent = val;
+          a.addEventListener("click", e => { e.preventDefault(); openStudentModal(row.roll); });
+          td.appendChild(a);
+        } else td.textContent = val;
+      } else {
+        const v = row[col.key];
+        td.textContent = v != null ? v : "";
+      }
+      tr.appendChild(td);
+    });
+    tbodyEl.appendChild(tr);
+  });
+  if (rows.length > MAX_RENDERED_ROWS) {
+    const tr = document.createElement("tr"); tr.className = "cap-row";
+    const td = document.createElement("td"); td.colSpan = columns.length;
+    td.textContent = "Showing first " + MAX_RENDERED_ROWS + " of " + rows.length.toLocaleString() + " results — refine filters to narrow down.";
+    tr.appendChild(td); tbodyEl.appendChild(tr);
+  }
+}
+
+/* =========================================================
+   DASHBOARD — analytics only (filters + KPIs + charts)
+   ========================================================= */
+const DASH_STATE = { year: "", dept: "", section: "" };
+
+function dashFilteredStudents() {
+  return MOCK_STUDENTS
+    .filter(s => !DASH_STATE.year    || s.class   === DASH_STATE.year)
+    .filter(s => !DASH_STATE.dept    || s.dept    === DASH_STATE.dept)
+    .filter(s => !DASH_STATE.section || s.section === DASH_STATE.section);
+}
+
+function weeklyAttendance() {
+  const DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  let base = 83;
+  if (DASH_STATE.year === "First Year")  base += 3;
+  if (DASH_STATE.year === "Fourth Year") base -= 3;
+  if (DASH_STATE.dept === "CSE" || DASH_STATE.dept === "IT") base += 2;
+  if (DASH_STATE.dept === "MECH" || DASH_STATE.dept === "CIVIL") base -= 2;
+  if (DASH_STATE.section) base += DASH_STATE.section.charCodeAt(0) - 67;
+  return DAYS.map((d, i) => {
+    const noise = Math.sin(i * 0.9 + (DASH_STATE.year.length || 1)) * 4;
+    const dip = (i === 2 || i === 5) ? -2 : 0;
+    return { label: d, value: Math.round(Math.max(60, Math.min(97, base + noise + dip))) };
+  });
+}
+
+function weeklyApprovals() {
+  const DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const subset = dashFilteredStudents().length;
+  let base = Math.max(8, Math.round(subset * 0.012) + 18);
+  return DAYS.map((d, i) => {
+    const noise = Math.sin(i * 0.7) * 6 + (i === 4 ? 6 : 0) - (i === 6 ? 5 : 0);
+    return { label: d, value: Math.max(2, Math.round(base + noise)) };
+  });
+}
+
+function studentsByDept() {
+  const subset = dashFilteredStudents();
+  return DEPTS.map(d => ({ label: d, value: subset.filter(s => s.dept === d).length }));
+}
+
+function busPassByRouteChart() {
+  const subset = dashFilteredStudents().filter(s => s.busPass && s.busRoute);
+  const counts = {};
+  for (const s of subset) counts[s.busRoute] = (counts[s.busRoute] || 0) + 1;
+  return Array.from({ length: 10 }, (_, i) => ({
+    label: "R" + (i + 1),
+    value: counts["Route " + (i + 1)] || 0,
+  }));
+}
+
+function renderDashboard() {
+  const bar = document.getElementById("dash-filters");
+  if (!bar.dataset.built) {
+    buildFilterBar(bar, [
+      { id: "dash-year",    label: "Year",       options: CLASSES },
+      { id: "dash-dept",    label: "Department", options: DEPTS },
+      { id: "dash-section", label: "Section",    options: SECTIONS },
+    ], () => {
+      DASH_STATE.year    = gv("dash-year");
+      DASH_STATE.dept    = gv("dash-dept");
+      DASH_STATE.section = gv("dash-section");
+      renderDashboardBody();
+    });
+    bar.dataset.built = "1";
+  }
+  renderDashboardBody();
+}
+
+function renderDashboardBody() {
+  const subset = dashFilteredStudents();
+  const busHolders = subset.filter(s => s.busPass).length;
+  const weekAttend = weeklyAttendance();
+  const avgAttend  = Math.round(weekAttend.reduce((s, d) => s + d.value, 0) / weekAttend.length);
+  const weekApprov = weeklyApprovals();
+  const avgApprov  = Math.round(weekApprov.reduce((s, d) => s + d.value, 0) / weekApprov.length);
+
+  renderKPI(document.getElementById("dash-kpis"), [
+    { label: "Total Students", value: subset.length.toLocaleString(),
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M10 3a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm0 8.5c-3.6 0-6.5 1.9-6.5 4.5v1h13v-1c0-2.6-2.9-4.5-6.5-4.5z"/></svg>' },
+    { label: "Avg Attendance (7d)", value: avgAttend + "%", color: "green",
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M3 15l4-5 3 3 4-6 3 4v4H3z"/></svg>' },
+    { label: "Avg Daily Approvals", value: avgApprov.toLocaleString(), color: "orange",
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M4 4h12v3H4zm0 5h12v3H4zm0 5h8v3H4z"/></svg>' },
+    { label: "Bus Pass Holders", value: busHolders.toLocaleString(),
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M5 2h10a2 2 0 012 2v11a2 2 0 01-1 1.7V18a1 1 0 11-2 0v-1H6v1a1 1 0 11-2 0v-1.3A2 2 0 013 15V4a2 2 0 012-2zm0 2v6h10V4H5z"/></svg>' },
+  ]);
+
+  renderLineChart(document.getElementById("chart-attendance"), weekAttend, { color: "#107C10", yUnit: "%", min: 55, max: 100 });
+  renderLineChart(document.getElementById("chart-approvals"),  weekApprov, { color: "#0078D4" });
+  renderBarChart (document.getElementById("chart-dept"),       studentsByDept(), { color: "#5C2D91" });
+  renderBarChart (document.getElementById("chart-buspass"),    busPassByRouteChart(), { color: "#CA5010" });
+}
+
+/* =========================================================
+   BUS PASS VIEW
+   ========================================================= */
+const BUSPASS_STATE = { route: "", year: "", dept: "", search: "" };
+
+function renderBusPass() {
+  const bar = document.getElementById("buspass-filters");
+  if (!bar.dataset.built) {
+    buildFilterBar(bar, [
+      { id: "bp-route",  label: "Route",      options: BUS_ROUTE_DETAILS.map(r => r.id) },
+      { id: "bp-year",   label: "Year",       options: CLASSES },
+      { id: "bp-dept",   label: "Department", options: DEPTS },
+      { id: "bp-search", label: "Search Roll / Name", type: "search", placeholder: "Roll or name..." },
+    ], () => {
+      BUSPASS_STATE.route  = gv("bp-route");
+      BUSPASS_STATE.year   = gv("bp-year");
+      BUSPASS_STATE.dept   = gv("bp-dept");
+      BUSPASS_STATE.search = gv("bp-search");
+      renderBusPassTable();
+    });
+    bar.dataset.built = "1";
+  }
+  renderBusPassKPIs();
+  renderBusRouteCards();
+  renderBusPassTable();
+}
+
+function renderBusPassKPIs() {
+  const holders = MOCK_STUDENTS.filter(s => s.busPass).length;
+  const totalCap = BUS_ROUTE_DETAILS.reduce((s, r) => s + r.capacity, 0);
+  const utilised = Math.round((holders / totalCap) * 100);
+  renderKPI(document.getElementById("buspass-kpis"), [
+    { label: "Bus Pass Holders", value: holders.toLocaleString(),
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M5 2h10a2 2 0 012 2v11a2 2 0 01-1 1.7V18a1 1 0 11-2 0v-1H6v1a1 1 0 11-2 0v-1.3A2 2 0 013 15V4a2 2 0 012-2zm0 2v6h10V4H5z"/></svg>' },
+    { label: "Active Routes", value: BUS_ROUTE_DETAILS.length, color: "green",
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M10 2a6 6 0 016 6c0 4-6 10-6 10S4 12 4 8a6 6 0 016-6zm0 4a2 2 0 100 4 2 2 0 000-4z"/></svg>' },
+    { label: "Fleet Capacity", value: totalCap.toLocaleString(), color: "orange",
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M3 4h14v2H3zm0 5h14v2H3zm0 5h14v2H3z"/></svg>' },
+    { label: "Seat Utilisation", value: utilised + "%", color: "red",
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 4v4.4l3.1 1.8-1 1.7L9 11V6h2z"/></svg>' },
+  ]);
+}
+
+function renderBusRouteCards() {
+  const grid = document.getElementById("bus-route-grid");
+  grid.innerHTML = "";
+  BUS_ROUTE_DETAILS.forEach(r => {
+    const pct = Math.min(100, Math.round((r.holders / r.capacity) * 100));
+    const fillClass = pct >= 95 ? "full" : pct >= 75 ? "warn" : "";
+    const card = document.createElement("div");
+    card.className = "bus-route-card";
+    card.innerHTML =
+      '<div class="bus-route-head"><h3></h3><span class="badge badge-info"></span></div>' +
+      '<div class="route-meta">Driver: <strong class="rm-driver"></strong> · <span class="rm-phone"></span></div>' +
+      '<div class="route-meta">Vehicle: <strong class="rm-vehicle"></strong></div>' +
+      '<div class="route-meta">Stops: <span class="rm-stops"></span></div>' +
+      '<div class="route-meta">Morning: <strong class="rm-morning"></strong> · Evening: <strong class="rm-evening"></strong></div>' +
+      '<div class="route-meta rm-occ"></div>' +
+      '<div class="capacity-bar"><div class="capacity-fill"></div></div>';
+    card.querySelector("h3").textContent = r.id;
+    card.querySelector(".badge").textContent = r.holders + " / " + r.capacity;
+    card.querySelector(".rm-driver").textContent = r.driver;
+    card.querySelector(".rm-phone").textContent = "+91 " + r.driverPhone;
+    card.querySelector(".rm-vehicle").textContent = r.vehicle;
+    card.querySelector(".rm-stops").textContent = r.stops.join(" → ");
+    card.querySelector(".rm-morning").textContent = r.morning;
+    card.querySelector(".rm-evening").textContent = r.evening;
+    card.querySelector(".rm-occ").textContent = pct + "% occupancy";
+    const fill = card.querySelector(".capacity-fill");
+    fill.style.width = pct + "%";
+    if (fillClass) fill.classList.add(fillClass);
     grid.appendChild(card);
   });
 }
 
-function showDetail(key) {
-  currentDetail = key;
-  const config = DETAIL_CONFIGS[key];
-  setText("detail-title", config.title);
-  setText("detail-subtitle", config.subtitle);
-  document.querySelectorAll(".stat-card[data-detail]").forEach(c => {
-    c.classList.toggle("active", c.dataset.detail === key);
-  });
-  const tableWrap = document.getElementById("detail-table-wrap");
-  const classGrid = document.getElementById("detail-class-grid");
-  if (config.mode === "cards") {
-    tableWrap.classList.add("hidden");
-    classGrid.classList.remove("hidden");
-    document.getElementById("detail-filters").classList.add("hidden");
-    renderClassCards(config);
-  } else {
-    classGrid.classList.add("hidden");
-    tableWrap.classList.remove("hidden");
-    const thead = document.getElementById("detail-thead");
-    thead.innerHTML = "";
-    const headRow = document.createElement("tr");
-    config.columns.forEach(col => {
-      const th = document.createElement("th");
-      th.textContent = col;
-      headRow.appendChild(th);
+function renderBusPassTable() {
+  const q = BUSPASS_STATE.search.toLowerCase();
+  const rows = MOCK_STUDENTS
+    .filter(s => s.busPass)
+    .filter(s => !BUSPASS_STATE.route || s.busRoute === BUSPASS_STATE.route)
+    .filter(s => !BUSPASS_STATE.year  || s.class    === BUSPASS_STATE.year)
+    .filter(s => !BUSPASS_STATE.dept  || s.dept     === BUSPASS_STATE.dept)
+    .filter(s => !q || s.roll.toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
+  renderTable(
+    document.getElementById("buspass-thead"),
+    document.getElementById("buspass-tbody"),
+    [
+      { label: "Roll No.",   key: "roll", type: "roll" },
+      { label: "Name",       key: "name", type: "name" },
+      { label: "Year",       key: "class" },
+      { label: "Section",    key: "section" },
+      { label: "Department", key: "dept" },
+      { label: "Route",      key: "busRoute" },
+      { label: "Phone",      render: (td, r) => td.textContent = "+91 " + r.phone },
+    ],
+    rows
+  );
+  updateCount(document.getElementById("buspass-filters"), rows.length);
+}
+
+/* =========================================================
+   GATE ENTRY VIEW
+   ========================================================= */
+const GATE_STATE = { year: "", dept: "", section: "", direction: "", search: "" };
+
+function renderGate() {
+  const bar = document.getElementById("gate-filters");
+  if (!bar.dataset.built) {
+    buildFilterBar(bar, [
+      { id: "g-year",    label: "Year",       options: CLASSES },
+      { id: "g-dept",    label: "Department", options: DEPTS },
+      { id: "g-section", label: "Section",    options: SECTIONS },
+      { id: "g-dir",     label: "Direction",  options: ["Entry","Exit"] },
+      { id: "g-search",  label: "Search Roll / Name", type: "search", placeholder: "Roll or name..." },
+    ], () => {
+      GATE_STATE.year      = gv("g-year");
+      GATE_STATE.dept      = gv("g-dept");
+      GATE_STATE.section   = gv("g-section");
+      GATE_STATE.direction = gv("g-dir");
+      GATE_STATE.search    = gv("g-search");
+      renderGateTable();
     });
-    thead.appendChild(headRow);
-    renderFilters(config);
-    renderDetailRows();
+    bar.dataset.built = "1";
   }
+  renderGateKPIs();
+  renderGateTable();
 }
 
-// Open students filtered by class (used from class cards + header search)
-function openClassStudents(cls) {
-  showDetail("students");
-  const clsFilter = document.getElementById("flt-class");
-  if (clsFilter) {
-    clsFilter.value = cls;
-    renderDetailRows();
-  }
-  setText("detail-title", cls + " — Students");
-  setText("detail-subtitle", MOCK_STUDENTS.filter(s => s.class === cls).length.toLocaleString() + " enrolled in " + cls);
+function renderGateKPIs() {
+  const total  = MOCK_GATE_ENTRIES.length;
+  const ins    = MOCK_GATE_ENTRIES.filter(e => e.direction === "Entry").length;
+  const outs   = MOCK_GATE_ENTRIES.filter(e => e.direction === "Exit").length;
+  const unique = new Set(MOCK_GATE_ENTRIES.map(e => e.roll)).size;
+  renderKPI(document.getElementById("gate-kpis"), [
+    { label: "Total Movements", value: total.toLocaleString(),
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M3 3h4v14H3V3zm10 0h4v14h-4V3zM8 3h4v4H8zm0 6h4v2H8zm0 4h4v4H8z"/></svg>' },
+    { label: "Entries", value: ins.toLocaleString(), color: "green",
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M3 10l6-6v3h7v6H9v3z"/></svg>' },
+    { label: "Exits", value: outs.toLocaleString(), color: "red",
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M17 10l-6 6v-3H4V7h7V4z"/></svg>' },
+    { label: "Unique Students", value: unique.toLocaleString(), color: "orange",
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M10 3a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm0 8.5c-3.6 0-6.5 1.9-6.5 4.5v1h13v-1c0-2.6-2.9-4.5-6.5-4.5z"/></svg>' },
+  ]);
 }
 
-// Wire up stat-card clicks
-document.querySelectorAll(".stat-card[data-detail]").forEach(card => {
-  card.addEventListener("click", () => showDetail(card.dataset.detail));
-});
+function renderGateTable() {
+  const q = GATE_STATE.search.toLowerCase();
+  const rows = MOCK_GATE_ENTRIES
+    .filter(e => !GATE_STATE.year      || e.class     === GATE_STATE.year)
+    .filter(e => !GATE_STATE.dept      || e.dept      === GATE_STATE.dept)
+    .filter(e => !GATE_STATE.section   || e.section   === GATE_STATE.section)
+    .filter(e => !GATE_STATE.direction || e.direction === GATE_STATE.direction)
+    .filter(e => !q || e.roll.toLowerCase().includes(q) || e.name.toLowerCase().includes(q));
+  renderTable(
+    document.getElementById("gate-thead"),
+    document.getElementById("gate-tbody"),
+    [
+      { label: "Roll No.",   key: "roll", type: "roll" },
+      { label: "Name",       key: "name", type: "name" },
+      { label: "Year",       key: "class" },
+      { label: "Section",    key: "section" },
+      { label: "Department", key: "dept" },
+      { label: "Gate",       key: "gate" },
+      { label: "Direction",  render: (td, r) => {
+        const b = document.createElement("span");
+        b.className = "badge " + (r.direction === "Entry" ? "badge-success" : "badge-danger");
+        b.textContent = r.direction;
+        td.appendChild(b);
+      } },
+      { label: "Time",       key: "time" },
+    ],
+    rows
+  );
+  updateCount(document.getElementById("gate-filters"), rows.length);
+}
+
+/* =========================================================
+   PENDING APPROVALS VIEW (with Approve button)
+   ========================================================= */
+const PENDING_STATE = { search: "" };
+
+function renderPending() {
+  const bar = document.getElementById("pending-filters");
+  if (!bar.dataset.built) {
+    buildFilterBar(bar, [
+      { id: "p-search", label: "Search by Roll / Name", type: "search", placeholder: "e.g. 22CS1042" },
+    ], () => {
+      PENDING_STATE.search = gv("p-search");
+      renderPendingTable();
+    });
+    bar.dataset.built = "1";
+  }
+  renderPendingKPIs();
+  renderPendingTable();
+}
+
+function renderPendingKPIs() {
+  const byType = {};
+  MOCK_PENDING.forEach(p => { byType[p.type] = (byType[p.type] || 0) + 1; });
+  renderKPI(document.getElementById("pending-kpis"), [
+    { label: "Total Pending", value: MOCK_PENDING.length.toLocaleString(), color: "orange",
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 3v4.4l3.1 1.8-1 1.7L9 11V5h2z"/></svg>' },
+    { label: "Gate Pass Requests", value: (byType["Gate Pass"] || 0).toLocaleString(),
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M3 3h4v14H3V3zm10 0h4v14h-4V3z"/></svg>' },
+    { label: "Bus Pass Requests", value: (byType["Bus Pass"] || 0).toLocaleString(), color: "green",
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M5 2h10a2 2 0 012 2v11a2 2 0 01-1 1.7V18a1 1 0 11-2 0v-1H6v1a1 1 0 11-2 0v-1.3A2 2 0 013 15V4a2 2 0 012-2z"/></svg>' },
+  ]);
+}
+
+function renderPendingTable() {
+  const q = PENDING_STATE.search.toLowerCase();
+  const rows = MOCK_PENDING
+    .filter(p => !q || p.roll.toLowerCase().includes(q) || p.name.toLowerCase().includes(q));
+  renderTable(
+    document.getElementById("pending-thead"),
+    document.getElementById("pending-tbody"),
+    [
+      { label: "Roll No.",     key: "roll", type: "roll" },
+      { label: "Name",         key: "name", type: "name" },
+      { label: "Type",         key: "type" },
+      { label: "Reason",       key: "reason" },
+      { label: "Requested At", key: "requestedAt" },
+      { label: "Action", render: (td, r) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn btn-primary btn-sm";
+        btn.textContent = "Approve";
+        btn.addEventListener("click", () => approvePending(r.id));
+        td.appendChild(btn);
+      } },
+    ],
+    rows
+  );
+  updateCount(document.getElementById("pending-filters"), rows.length);
+}
+
+function approvePending(id) {
+  const idx = MOCK_PENDING.findIndex(p => p.id === id);
+  if (idx === -1) return;
+  const item = MOCK_PENDING[idx];
+  MOCK_PENDING.splice(idx, 1);
+  // TODO: call API to approve the pending request
+  toast("success", "Request approved", item.name + " (" + item.roll + ") — " + item.type + " approved.");
+  renderPending();
+}
+
+/* =========================================================
+   HOSTEL VIEW
+   ========================================================= */
+const HOSTEL_STATE = { year: "", dept: "", section: "", search: "" };
+
+function renderHostel() {
+  const bar = document.getElementById("hostel-filters");
+  if (!bar.dataset.built) {
+    buildFilterBar(bar, [
+      { id: "h-year",    label: "Year",       options: CLASSES },
+      { id: "h-dept",    label: "Department", options: DEPTS },
+      { id: "h-section", label: "Section",    options: SECTIONS },
+      { id: "h-search",  label: "Search Roll / Name", type: "search", placeholder: "Roll or name..." },
+    ], () => {
+      HOSTEL_STATE.year    = gv("h-year");
+      HOSTEL_STATE.dept    = gv("h-dept");
+      HOSTEL_STATE.section = gv("h-section");
+      HOSTEL_STATE.search  = gv("h-search");
+      renderHostelTable();
+      renderHostelCharts();
+      renderHostelKPIs();
+    });
+    bar.dataset.built = "1";
+  }
+  renderHostelKPIs();
+  renderHostelCharts();
+  renderHostelTable();
+}
+
+function hostelFilteredResidents() {
+  const q = HOSTEL_STATE.search.toLowerCase();
+  return MOCK_STUDENTS
+    .filter(s => s.hostel)
+    .filter(s => !HOSTEL_STATE.year    || s.class   === HOSTEL_STATE.year)
+    .filter(s => !HOSTEL_STATE.dept    || s.dept    === HOSTEL_STATE.dept)
+    .filter(s => !HOSTEL_STATE.section || s.section === HOSTEL_STATE.section)
+    .filter(s => !q || s.roll.toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
+}
+
+function renderHostelKPIs() {
+  const allRes = MOCK_STUDENTS.filter(s => s.hostel);
+  const filtered = hostelFilteredResidents();
+  const boys  = Math.round(allRes.length * 0.62);
+  const girls = allRes.length - boys;
+  renderKPI(document.getElementById("hostel-kpis"), [
+    { label: "Total Residents", value: allRes.length.toLocaleString(),
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M3 17h14M4 17V8l6-4 6 4v9M8 11h1v2H8zm3 0h1v2h-1zm-3 4h4v2H8z"/></svg>' },
+    { label: "Matches Filter", value: filtered.length.toLocaleString(), color: "green",
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M3 5h14v2H3zm2 5h10v2H5zm2 5h6v2H7z"/></svg>' },
+    { label: "Boys (est.)", value: boys.toLocaleString(), color: "orange",
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M10 3a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm0 8.5c-3.6 0-6.5 1.9-6.5 4.5v1h13v-1c0-2.6-2.9-4.5-6.5-4.5z"/></svg>' },
+    { label: "Girls (est.)", value: girls.toLocaleString(), color: "red",
+      icon: '<svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor"><path d="M10 3a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm0 8.5c-3.6 0-6.5 1.9-6.5 4.5v1h13v-1c0-2.6-2.9-4.5-6.5-4.5z"/></svg>' },
+  ]);
+}
+
+function renderHostelCharts() {
+  const filtered = hostelFilteredResidents();
+  renderBarChart(
+    document.getElementById("chart-hostel-dept"),
+    DEPTS.map(d => ({ label: d, value: filtered.filter(s => s.dept === d).length })),
+    { color: "#5C2D91" }
+  );
+  renderBarChart(
+    document.getElementById("chart-hostel-year"),
+    CLASSES.map(c => ({ label: c.split(" ")[0], value: filtered.filter(s => s.class === c).length })),
+    { color: "#107C10" }
+  );
+}
+
+function renderHostelTable() {
+  const rows = hostelFilteredResidents();
+  renderTable(
+    document.getElementById("hostel-thead"),
+    document.getElementById("hostel-tbody"),
+    [
+      { label: "Roll No.",     key: "roll", type: "roll" },
+      { label: "Name",         key: "name", type: "name" },
+      { label: "Year",         key: "class" },
+      { label: "Section",      key: "section" },
+      { label: "Department",   key: "dept" },
+      { label: "Phone",        render: (td, r) => td.textContent = "+91 " + r.phone },
+      { label: "Parent Phone", render: (td, r) => td.textContent = "+91 " + r.parentPhone },
+    ],
+    rows
+  );
+  updateCount(document.getElementById("hostel-filters"), rows.length);
+}
+
 
 /* =========================================================
    STUDENT DETAIL MODAL
@@ -2026,44 +2587,60 @@ document.getElementById("modal-overlay").addEventListener("click", closeStudentM
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeStudentModal(); });
 
 /* =========================================================
-   HEADER SEARCH — responsive: routes query to class view,
-   specific class, or roll/name filter on students list.
+   HEADER SEARCH — suggestion dropdown (roll/name lookup)
    ========================================================= */
-const HEADER_YEAR_TERMS = [
-  { terms: ["first year", "1st year", "year 1", "1 year"],  cls: "First Year"  },
-  { terms: ["second year","2nd year","year 2","2 year"],    cls: "Second Year" },
-  { terms: ["third year", "3rd year","year 3","3 year"],    cls: "Third Year"  },
-  { terms: ["fourth year","4th year","year 4","4 year","final year"], cls: "Fourth Year" },
-];
+const topSearchWrap  = document.querySelector(".topbar-search");
+const topSearchInput = document.getElementById("topbar-search-input");
+let suggestionsBox = null;
+let headerSearchTimer;
 
-function handleHeaderSearch(q) {
-  if (!q) return;
-  const lower = q.toLowerCase();
-  for (const { terms, cls } of HEADER_YEAR_TERMS) {
-    if (terms.some(t => lower.includes(t))) { openClassStudents(cls); return; }
-  }
-  if (/^\s*class(es)?\s*$/.test(lower)) { showDetail("classes"); return; }
-  // Generic roll / name search: route to the Total Students list and apply filter
-  showDetail("students");
-  const searchInput = document.getElementById("flt-search");
-  if (searchInput) {
-    searchInput.value = q;
-    renderDetailRows();
-  }
+function closeSuggestions() {
+  if (suggestionsBox) { suggestionsBox.remove(); suggestionsBox = null; }
+}
+function openSuggestions(matches) {
+  closeSuggestions();
+  if (!matches.length) return;
+  suggestionsBox = document.createElement("div");
+  suggestionsBox.className = "search-suggestions";
+  matches.slice(0, 8).forEach(s => {
+    const item = document.createElement("div");
+    item.className = "search-suggestion";
+    const main = document.createElement("div");
+    main.className = "search-suggestion-main";
+    main.textContent = s.name + " — " + s.roll;
+    const sub = document.createElement("div");
+    sub.className = "search-suggestion-sub";
+    sub.textContent = s.class + " · " + s.dept + " " + s.section;
+    item.appendChild(main);
+    item.appendChild(sub);
+    item.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      closeSuggestions();
+      if (topSearchInput) topSearchInput.value = "";
+      openStudentModal(s.roll);
+    });
+    suggestionsBox.appendChild(item);
+  });
+  topSearchWrap.appendChild(suggestionsBox);
 }
 
-let headerSearchTimer;
-const topSearchInput = document.getElementById("topbar-search-input");
 if (topSearchInput) {
   topSearchInput.addEventListener("input", (e) => {
     clearTimeout(headerSearchTimer);
-    const q = e.target.value.trim();
-    headerSearchTimer = setTimeout(() => handleHeaderSearch(q), 180);
+    const q = e.target.value.trim().toLowerCase();
+    if (!q) { closeSuggestions(); return; }
+    headerSearchTimer = setTimeout(() => {
+      const matches = MOCK_STUDENTS.filter(s =>
+        s.roll.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
+      );
+      openSuggestions(matches);
+    }, 160);
   });
+  topSearchInput.addEventListener("blur", () => setTimeout(closeSuggestions, 150));
 }
 
-renderStatNumbers();
-showDetail("students");
+/* Initial dashboard render (fires again via showView when nav changes) */
+renderDashboard();
 
 /* =========================================================
    INITIAL ROUTE
