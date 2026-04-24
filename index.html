@@ -1262,11 +1262,13 @@
   }
   .sidebar-profile { border-top: 1px solid rgba(163,177,198,0.15); }
 
-  /* Topbar */
+  /* Topbar — opaque so sticky header covers scrolling content beneath */
   .topbar {
     border-bottom: none;
-    background: transparent;
-    box-shadow: 0 4px 16px rgba(163,177,198,0.08);
+    background: rgba(232, 236, 242, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 4px 16px rgba(163,177,198,0.12);
   }
   .topbar-search {
     border-radius: 12px;
@@ -1363,6 +1365,95 @@
   }
   .search-suggestion { border-bottom: 1px solid rgba(163,177,198,0.1); }
   .search-suggestion:hover { background: rgba(0,120,212,0.08); }
+
+  /* Custom clay dropdown (replaces native <select>) */
+  .clay-select {
+    position: relative;
+    min-width: 180px;
+    outline: none;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .clay-select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 9px 14px;
+    min-height: 36px;
+    background: #FFFFFF;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow:
+      inset 2px 2px 4px rgba(163,177,198,0.15),
+      inset -2px -2px 4px rgba(255,255,255,1),
+      0 0 0 1px rgba(163,177,198,0.15);
+    transition: box-shadow 180ms ease;
+  }
+  .clay-select:focus .clay-select-trigger,
+  .clay-select.open .clay-select-trigger {
+    box-shadow:
+      inset 2px 2px 4px rgba(163,177,198,0.15),
+      inset -2px -2px 4px rgba(255,255,255,1),
+      0 0 0 2px var(--color-primary);
+  }
+  .clay-select-label { color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .clay-select-label.placeholder { color: var(--color-text-muted); }
+  .clay-select-arrow {
+    display: flex;
+    color: var(--color-text-secondary);
+    transition: transform 200ms ease;
+    flex-shrink: 0;
+  }
+  .clay-select.open .clay-select-arrow { transform: rotate(180deg); }
+
+  .clay-select-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--color-surface);
+    border-radius: 14px;
+    padding: 6px;
+    box-shadow:
+      12px 12px 28px rgba(163,177,198,0.45),
+      -6px -6px 18px rgba(255,255,255,1);
+    max-height: 260px;
+    overflow-y: auto;
+    animation: clayMenuIn 160ms ease;
+  }
+  .clay-select-menu.flip-up {
+    top: auto;
+    bottom: calc(100% + 6px);
+  }
+  @keyframes clayMenuIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .clay-select-option {
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--color-text);
+    transition: background 120ms ease;
+  }
+  .clay-select-option.highlight { background: rgba(0,120,212,0.10); }
+  .clay-select-option.selected {
+    background: var(--color-primary);
+    color: #FFFFFF;
+    font-weight: 600;
+    box-shadow: inset 1px 1px 2px rgba(255,255,255,0.2);
+  }
+  .clay-select-option.selected.highlight { background: var(--color-primary); }
+
+  /* Form validation state on clay-select inside fluent-field */
+  .fluent-field.invalid .clay-select .clay-select-trigger {
+    box-shadow:
+      inset 2px 2px 4px rgba(163,177,198,0.15),
+      inset -2px -2px 4px rgba(255,255,255,1),
+      0 0 0 2px var(--color-danger);
+  }
 </style>
 </head>
 <body>
@@ -1962,6 +2053,8 @@ const enrollFields = () => enrollForm.querySelectorAll(".fluent-field[data-field
 
 function resetEnrollForm() {
   enrollForm.reset();
+  // Reset clay-selects (native form.reset() doesn't know about them)
+  enrollForm.querySelectorAll(".clay-select").forEach(sel => { sel.value = ""; });
   enrollFields().forEach(f => f.classList.remove("invalid"));
   // reset toggles
   document.getElementById("toggle-buspass").classList.remove("on");
@@ -2296,6 +2389,142 @@ function renderBarChart(container, data, opts) {
    ========================================================= */
 const MAX_RENDERED_ROWS = 200;
 
+/* Custom clay dropdown — replaces native <select> so the menu
+   popup can inherit the claymorphism theme.
+   Exposes root.value getter/setter so existing gv(id) code works. */
+function makeClaySelect(cfg) {
+  const opts = (cfg.options || []).map(o =>
+    typeof o === "string" ? { value: o, label: o } : o
+  );
+  const placeholder = cfg.placeholder || "";
+  let currentValue = cfg.value != null ? cfg.value : "";
+  let highlighted = -1;
+
+  const root = document.createElement("div");
+  if (cfg.id) root.id = cfg.id;
+  root.className = "clay-select";
+  root.tabIndex = 0;
+  root.setAttribute("role", "combobox");
+  root.setAttribute("aria-haspopup", "listbox");
+  root.setAttribute("aria-expanded", "false");
+
+  const trigger = document.createElement("div");
+  trigger.className = "clay-select-trigger";
+  const labelEl = document.createElement("span");
+  labelEl.className = "clay-select-label";
+  const arrow = document.createElement("span");
+  arrow.className = "clay-select-arrow";
+  arrow.innerHTML = '<svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor"><path d="M4 6l4 4 4-4z"/></svg>';
+  trigger.appendChild(labelEl);
+  trigger.appendChild(arrow);
+  root.appendChild(trigger);
+
+  const menu = document.createElement("div");
+  menu.className = "clay-select-menu";
+  menu.setAttribute("role", "listbox");
+  menu.hidden = true;
+  root.appendChild(menu);
+
+  function updateLabel() {
+    const match = opts.find(o => o.value === currentValue);
+    labelEl.textContent = match ? match.label : placeholder;
+    labelEl.classList.toggle("placeholder", !match);
+  }
+  function renderMenu() {
+    menu.innerHTML = "";
+    opts.forEach((opt, i) => {
+      const item = document.createElement("div");
+      item.className = "clay-select-option";
+      item.setAttribute("role", "option");
+      item.textContent = opt.label;
+      if (opt.value === currentValue) item.classList.add("selected");
+      if (i === highlighted) item.classList.add("highlight");
+      item.addEventListener("mouseenter", () => {
+        highlighted = i;
+        menu.querySelectorAll(".clay-select-option").forEach((el, idx) => {
+          el.classList.toggle("highlight", idx === highlighted);
+        });
+      });
+      item.addEventListener("mousedown", (e) => { e.preventDefault(); selectIndex(i); });
+      menu.appendChild(item);
+    });
+  }
+  function positionMenu() {
+    const rect = trigger.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    menu.classList.toggle("flip-up", spaceBelow < 280 && rect.top > 280);
+  }
+  function open() {
+    menu.hidden = false;
+    root.classList.add("open");
+    root.setAttribute("aria-expanded", "true");
+    positionMenu();
+    highlighted = opts.findIndex(o => o.value === currentValue);
+    renderMenu();
+    const sel = menu.querySelector(".clay-select-option.selected");
+    if (sel) sel.scrollIntoView({ block: "nearest" });
+    document.addEventListener("mousedown", outsideClick, true);
+    window.addEventListener("resize", positionMenu);
+    window.addEventListener("scroll", positionMenu, true);
+  }
+  function close() {
+    menu.hidden = true;
+    root.classList.remove("open");
+    root.setAttribute("aria-expanded", "false");
+    document.removeEventListener("mousedown", outsideClick, true);
+    window.removeEventListener("resize", positionMenu);
+    window.removeEventListener("scroll", positionMenu, true);
+  }
+  function outsideClick(e) { if (!root.contains(e.target)) close(); }
+  function selectIndex(i) {
+    const opt = opts[i];
+    if (!opt) return;
+    currentValue = opt.value;
+    updateLabel();
+    close();
+    if (cfg.onChange) cfg.onChange(currentValue);
+    root.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  trigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (root.classList.contains("open")) close(); else open();
+  });
+  root.addEventListener("keydown", (e) => {
+    const isOpen = root.classList.contains("open");
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      if (isOpen && highlighted >= 0) selectIndex(highlighted);
+      else open();
+    } else if (e.key === "Escape") {
+      if (isOpen) { e.preventDefault(); close(); }
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (!isOpen) open();
+      highlighted = (highlighted + 1) % opts.length;
+      renderMenu();
+      const el = menu.querySelectorAll(".clay-select-option")[highlighted];
+      if (el) el.scrollIntoView({ block: "nearest" });
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (!isOpen) open();
+      highlighted = (highlighted - 1 + opts.length) % opts.length;
+      renderMenu();
+      const el = menu.querySelectorAll(".clay-select-option")[highlighted];
+      if (el) el.scrollIntoView({ block: "nearest" });
+    }
+  });
+
+  Object.defineProperty(root, "value", {
+    get() { return currentValue; },
+    set(v) { currentValue = v != null ? v : ""; updateLabel(); },
+    configurable: true,
+  });
+
+  updateLabel();
+  return root;
+}
+
 function buildFilterBar(container, filters, onChange) {
   container.innerHTML = "";
   filters.forEach(f => {
@@ -2311,18 +2540,16 @@ function buildFilterBar(container, filters, onChange) {
       inp.addEventListener("input", onChange);
       field.appendChild(inp);
     } else {
-      const sel = document.createElement("select");
-      sel.id = f.id;
-      const all = document.createElement("option");
-      all.value = ""; all.textContent = "All";
-      sel.appendChild(all);
-      f.options.forEach(o => {
-        const opt = document.createElement("option");
-        opt.value = o; opt.textContent = o;
-        sel.appendChild(opt);
+      const clay = makeClaySelect({
+        id: f.id,
+        options: [{ value: "", label: "All" }].concat(
+          f.options.map(o => ({ value: o, label: o }))
+        ),
+        value: "",
+        placeholder: "All",
+        onChange: onChange,
       });
-      sel.addEventListener("change", onChange);
-      field.appendChild(sel);
+      field.appendChild(clay);
     }
     container.appendChild(field);
   });
@@ -2971,6 +3198,26 @@ if (topSearchInput) {
   });
   topSearchInput.addEventListener("blur", () => setTimeout(closeSuggestions, 150));
 }
+
+/* Upgrade enrollment form's native <select>s to clay-selects so the
+   popup list matches the rest of the claymorphism theme. */
+(function upgradeFormSelects() {
+  const form = document.getElementById("enroll-form");
+  if (!form) return;
+  form.querySelectorAll("select").forEach(native => {
+    const id = native.id;
+    const options = [];
+    let placeholder = "";
+    native.querySelectorAll("option").forEach(o => {
+      if (o.value === "" && !placeholder) placeholder = o.textContent;
+      else options.push({ value: o.value || o.textContent, label: o.textContent });
+    });
+    const clay = makeClaySelect({ id, options, value: "", placeholder });
+    const wrap = native.closest(".input-wrap");
+    if (wrap) wrap.replaceWith(clay);
+    else native.replaceWith(clay);
+  });
+})();
 
 /* Initial dashboard render (fires again via showView when nav changes) */
 renderDashboard();
