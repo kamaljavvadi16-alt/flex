@@ -1303,13 +1303,15 @@
       inset -3px -3px 6px rgba(255,255,255,0.9);
   }
 
-  /* Modal */
+  /* Modal — calm drop shadow (no bright highlight, sits over dim overlay) */
+  .modal-overlay { background: rgba(20, 28, 48, 0.5); }
   .modal-card {
     border: none;
-    border-radius: 24px;
+    border-radius: 22px;
+    background: var(--color-surface);
     box-shadow:
-      22px 22px 48px rgba(163,177,198,0.45),
-      -10px -10px 30px rgba(255,255,255,0.95);
+      0 24px 56px rgba(20, 28, 48, 0.32),
+      0 6px 14px rgba(20, 28, 48, 0.16);
   }
   .modal-header { border-bottom: 1px solid rgba(163,177,198,0.15); }
 
@@ -1946,6 +1948,57 @@ function signOut() {
   toast("success", "Signed out", "You have been signed out successfully.");
 }
 
+/* Generic confirm dialog reusing the modal styles. */
+function confirmDialog(opts) {
+  const cfg = Object.assign({
+    title: "Are you sure?",
+    message: "",
+    confirmText: "Confirm",
+    cancelText: "Cancel",
+    danger: false,
+  }, opts);
+  const modal = document.createElement("div");
+  modal.className = "modal";
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-modal", "true");
+  modal.innerHTML =
+    '<div class="modal-overlay"></div>' +
+    '<div class="modal-card" style="max-width:420px;">' +
+      '<div class="modal-header"><h2></h2></div>' +
+      '<div class="modal-body"></div>' +
+      '<div class="confirm-actions" style="display:flex;justify-content:flex-end;gap:10px;padding:0 20px 20px;">' +
+        '<button type="button" class="btn btn-secondary"></button>' +
+        '<button type="button" class="btn btn-primary"></button>' +
+      '</div>' +
+    '</div>';
+  modal.querySelector("h2").textContent = cfg.title;
+  modal.querySelector(".modal-body").textContent = cfg.message;
+  const cancelBtn  = modal.querySelector(".btn-secondary");
+  const confirmBtn = modal.querySelector(".btn-primary");
+  cancelBtn.textContent  = cfg.cancelText;
+  confirmBtn.textContent = cfg.confirmText;
+  if (cfg.danger) {
+    confirmBtn.style.background = "var(--color-danger)";
+    confirmBtn.style.color = "#fff";
+    confirmBtn.style.boxShadow = "6px 6px 14px rgba(164,38,44,0.35), -4px -4px 12px rgba(255,255,255,0.7)";
+  }
+  function close() {
+    modal.remove();
+    document.removeEventListener("keydown", onKey);
+  }
+  function onKey(e) {
+    if (e.key === "Escape") { e.preventDefault(); close(); }
+    else if (e.key === "Enter" && document.activeElement !== cancelBtn) { e.preventDefault(); doConfirm(); }
+  }
+  function doConfirm() { close(); if (cfg.onConfirm) cfg.onConfirm(); }
+  cancelBtn.addEventListener("click", close);
+  modal.querySelector(".modal-overlay").addEventListener("click", close);
+  confirmBtn.addEventListener("click", doConfirm);
+  document.addEventListener("keydown", onKey);
+  document.body.appendChild(modal);
+  setTimeout(() => confirmBtn.focus(), 30);
+}
+
 function route() {
   if (isAuthenticated()) {
     const session = JSON.parse(localStorage.getItem(SESSION_KEY));
@@ -2047,7 +2100,16 @@ document.getElementById("sidebar-nav").addEventListener("click", (e) => {
   showView(item.dataset.view);
 });
 
-document.getElementById("btn-logout").addEventListener("click", signOut);
+document.getElementById("btn-logout").addEventListener("click", () => {
+  confirmDialog({
+    title: "Sign out?",
+    message: "You'll be returned to the login screen and your session will end.",
+    confirmText: "Sign out",
+    cancelText: "Stay signed in",
+    danger: true,
+    onConfirm: signOut,
+  });
+});
 
 // Breadcrumb links within views
 document.addEventListener("click", (e) => {
