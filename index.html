@@ -1454,6 +1454,45 @@
       inset -2px -2px 4px rgba(255,255,255,1),
       0 0 0 2px var(--color-danger);
   }
+
+  /* Chart hover tooltip (one shared element, repositioned per hover) */
+  .chart-tooltip {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1100;
+    min-width: 160px;
+    max-width: 240px;
+    padding: 10px 12px;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow:
+      10px 10px 26px rgba(163,177,198,0.45),
+      -6px -6px 18px rgba(255,255,255,0.95);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--color-text);
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 120ms ease, transform 120ms ease;
+  }
+  .chart-tooltip.visible { opacity: 1; transform: translateY(0); }
+  .chart-tooltip-title {
+    display: block;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 2px;
+    font-size: 13px;
+  }
+  .chart-tooltip-body {
+    display: block;
+    color: var(--color-text-secondary);
+    white-space: pre-line;
+  }
+
+  /* Chart hover affordances */
+  .chart-svg .hover-target { cursor: pointer; }
+  .chart-svg circle.hovered { r: 5.5; }
+  .chart-svg rect.bar.hovered { fill-opacity: 0.85; }
 </style>
 </head>
 <body>
@@ -2149,6 +2188,17 @@ const SECTIONS = ["A","B","C","D","E"];
 const CLASSES  = ["First Year","Second Year","Third Year","Fourth Year"];
 const DEPT_CODES  = { CSE:"CS", ECE:"EC", EEE:"EE", MECH:"ME", CIVIL:"CE", IT:"IT", AIDS:"AI", AIML:"ML" };
 const YEAR_PREFIX = { "First Year":"24", "Second Year":"23", "Third Year":"22", "Fourth Year":"21" };
+const DEPT_FULL = {
+  CSE:"Computer Science Engineering",
+  ECE:"Electronics & Communication",
+  EEE:"Electrical & Electronics",
+  MECH:"Mechanical Engineering",
+  CIVIL:"Civil Engineering",
+  IT:"Information Technology",
+  AIDS:"AI & Data Science",
+  AIML:"AI & Machine Learning",
+};
+const DAY_FULL = { Mon:"Monday", Tue:"Tuesday", Wed:"Wednesday", Thu:"Thursday", Fri:"Friday", Sat:"Saturday", Sun:"Sunday" };
 
 const FIRST_NAMES = ["Aarav","Vivaan","Aditya","Arjun","Reyansh","Krishna","Ishaan","Shaurya","Atharv","Vihaan","Rohan","Karan","Dev","Arnav","Yash","Kabir","Veer","Neel","Raghav","Siddharth","Advait","Kunal","Nikhil","Ayaan","Rahul","Pranav","Harsh","Ritvik","Tanishq","Manav","Aadhya","Saanvi","Ananya","Diya","Ishani","Myra","Anika","Kiara","Pari","Riya","Meera","Priya","Divya","Sana","Nithya","Anushka","Tara","Kavya","Navya","Isha","Sneha","Trisha","Avni","Siya","Anvi","Prisha","Aanya","Vanya","Ridhima","Khushi"];
 const LAST_NAMES  = ["Sharma","Patel","Reddy","Iyer","Nair","Menon","Kapoor","Malhotra","Chopra","Gupta","Verma","Singh","Rao","Desai","Bhatt","Mehta","Joshi","Agarwal","Mishra","Pandey","Shah","Kulkarni","Pillai","Kumar","Das","Bose","Chakraborty","Ghosh","Roy","Banerjee","Jain","Sinha","Trivedi","Chauhan","Khan","Qureshi","Naidu","Subramanian","Srinivasan","Venkatesh"];
@@ -2308,6 +2358,64 @@ function svgEl(tag, attrs) {
   return el;
 }
 
+/* Shared chart tooltip — single floating div, repositioned on hover.
+   Each data point in chart `data` may carry a `tooltip` field as either:
+     - a string (treated as body, label used as title)
+     - an object { title, body } */
+const chartTooltipEl = (() => {
+  const el = document.createElement("div");
+  el.id = "chart-tooltip";
+  el.className = "chart-tooltip";
+  el.innerHTML = '<span class="chart-tooltip-title"></span><span class="chart-tooltip-body"></span>';
+  document.body.appendChild(el);
+  return el;
+})();
+
+function showChartTooltip(point, evt) {
+  const titleEl = chartTooltipEl.querySelector(".chart-tooltip-title");
+  const bodyEl  = chartTooltipEl.querySelector(".chart-tooltip-body");
+  let title, body;
+  if (point.tooltip && typeof point.tooltip === "object") {
+    title = point.tooltip.title || point.label;
+    body  = point.tooltip.body || "";
+  } else if (typeof point.tooltip === "string") {
+    title = point.label;
+    body  = point.tooltip;
+  } else {
+    title = point.label;
+    body  = String(point.value);
+  }
+  titleEl.textContent = title;
+  bodyEl.textContent  = body;
+  chartTooltipEl.classList.add("visible");
+  positionChartTooltip(evt);
+}
+function positionChartTooltip(evt) {
+  const w = chartTooltipEl.offsetWidth;
+  const h = chartTooltipEl.offsetHeight;
+  let x = evt.clientX + 14;
+  let y = evt.clientY - h - 10;
+  if (x + w > window.innerWidth - 8) x = evt.clientX - w - 14;
+  if (y < 8) y = evt.clientY + 18;
+  chartTooltipEl.style.left = x + "px";
+  chartTooltipEl.style.top  = y + "px";
+}
+function hideChartTooltip() {
+  chartTooltipEl.classList.remove("visible");
+}
+function attachChartHover(node, point, hoverClass) {
+  node.style.cursor = "pointer";
+  node.addEventListener("mouseenter", (e) => {
+    if (hoverClass) node.classList.add(hoverClass);
+    showChartTooltip(point, e);
+  });
+  node.addEventListener("mousemove", positionChartTooltip);
+  node.addEventListener("mouseleave", () => {
+    if (hoverClass) node.classList.remove(hoverClass);
+    hideChartTooltip();
+  });
+}
+
 function renderLineChart(container, data, opts) {
   container.innerHTML = "";
   opts = opts || {};
@@ -2339,7 +2447,14 @@ function renderLineChart(container, data, opts) {
   svg.appendChild(svgEl("path", { d: pathD, fill: "none", stroke: color, "stroke-width": 2 }));
 
   data.forEach((d, i) => {
-    svg.appendChild(svgEl("circle", { cx: pts[i][0], cy: pts[i][1], r: 3.5, fill: color }));
+    const dot = svgEl("circle", { cx: pts[i][0], cy: pts[i][1], r: 3.5, fill: color });
+    // Larger transparent hit-area concentric with the dot for easier hovering
+    const hit = svgEl("circle", { cx: pts[i][0], cy: pts[i][1], r: 14, fill: "transparent", class: "hover-target" });
+    attachChartHover(hit, d, null);
+    hit.addEventListener("mouseenter", () => dot.setAttribute("r", 5.5));
+    hit.addEventListener("mouseleave", () => dot.setAttribute("r", 3.5));
+    svg.appendChild(dot);
+    svg.appendChild(hit);
     const t = svgEl("text", { x: pts[i][0], y: H - pad.b + 16, "font-size": 11, fill: "#605E5C", "text-anchor": "middle" });
     t.textContent = d.label;
     svg.appendChild(t);
@@ -2372,7 +2487,14 @@ function renderBarChart(container, data, opts) {
   data.forEach((d, i) => {
     const cx = pad.l + i * bandW + bandW / 2;
     const by = y(d.value);
-    svg.appendChild(svgEl("rect", { x: cx - barW / 2, y: by, width: barW, height: pad.t + ih - by, fill: color, rx: 2 }));
+    const bar = svgEl("rect", { x: cx - barW / 2, y: by, width: barW, height: pad.t + ih - by, fill: color, rx: 2, class: "bar" });
+    // Full-band transparent hit rect so the entire column is hoverable, even when the bar is short
+    const hit = svgEl("rect", { x: pad.l + i * bandW, y: pad.t, width: bandW, height: ih, fill: "transparent", class: "hover-target" });
+    attachChartHover(hit, d, null);
+    hit.addEventListener("mouseenter", () => bar.classList.add("hovered"));
+    hit.addEventListener("mouseleave", () => bar.classList.remove("hovered"));
+    svg.appendChild(bar);
+    svg.appendChild(hit);
     const vt = svgEl("text", { x: cx, y: by - 4, "font-size": 10, fill: "#201F1E", "text-anchor": "middle", "font-weight": 600 });
     vt.textContent = d.value;
     svg.appendChild(vt);
@@ -2648,10 +2770,23 @@ function weeklyAttendance() {
   if (DASH_STATE.dept === "CSE" || DASH_STATE.dept === "IT") base += 2;
   if (DASH_STATE.dept === "MECH" || DASH_STATE.dept === "CIVIL") base -= 2;
   if (DASH_STATE.section) base += DASH_STATE.section.charCodeAt(0) - 67;
-  return DAYS.map((d, i) => {
+  const raw = DAYS.map((d, i) => {
     const noise = Math.sin(i * 0.9 + (DASH_STATE.year.length || 1)) * 4;
     const dip = (i === 2 || i === 5) ? -2 : 0;
-    return { label: d, value: Math.round(Math.max(60, Math.min(97, base + noise + dip))) };
+    return { day: d, value: Math.round(Math.max(60, Math.min(97, base + noise + dip))) };
+  });
+  const avg = raw.reduce((s, r) => s + r.value, 0) / raw.length;
+  return raw.map(r => {
+    const delta = r.value - avg;
+    const sign = delta >= 0 ? "+" : "−";
+    return {
+      label: r.day,
+      value: r.value,
+      tooltip: {
+        title: DAY_FULL[r.day] || r.day,
+        body: "Avg attendance: " + r.value + "%\nΔ vs week avg: " + sign + Math.abs(delta).toFixed(1) + "%",
+      },
+    };
   });
 }
 
@@ -2659,25 +2794,61 @@ function weeklyApprovals() {
   const DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
   const subset = dashFilteredStudents().length;
   let base = Math.max(8, Math.round(subset * 0.012) + 18);
-  return DAYS.map((d, i) => {
+  const raw = DAYS.map((d, i) => {
     const noise = Math.sin(i * 0.7) * 6 + (i === 4 ? 6 : 0) - (i === 6 ? 5 : 0);
-    return { label: d, value: Math.max(2, Math.round(base + noise)) };
+    return { day: d, value: Math.max(2, Math.round(base + noise)) };
+  });
+  const avg = raw.reduce((s, r) => s + r.value, 0) / raw.length;
+  return raw.map(r => {
+    const delta = r.value - avg;
+    const sign = delta >= 0 ? "+" : "−";
+    return {
+      label: r.day,
+      value: r.value,
+      tooltip: {
+        title: DAY_FULL[r.day] || r.day,
+        body: "Approvals: " + r.value.toLocaleString() + "\nΔ vs week avg: " + sign + Math.abs(delta).toFixed(1),
+      },
+    };
   });
 }
 
 function studentsByDept() {
   const subset = dashFilteredStudents();
-  return DEPTS.map(d => ({ label: d, value: subset.filter(s => s.dept === d).length }));
+  const total = subset.length || 1;
+  return DEPTS.map(d => {
+    const count = subset.filter(s => s.dept === d).length;
+    return {
+      label: d,
+      value: count,
+      tooltip: {
+        title: DEPT_FULL[d] || d,
+        body: "Enrolled: " + count.toLocaleString() + "\nShare: " + ((count / total) * 100).toFixed(1) + "% of filtered students",
+      },
+    };
+  });
 }
 
 function busPassByRouteChart() {
   const subset = dashFilteredStudents().filter(s => s.busPass && s.busRoute);
   const counts = {};
   for (const s of subset) counts[s.busRoute] = (counts[s.busRoute] || 0) + 1;
-  return Array.from({ length: 10 }, (_, i) => ({
-    label: "R" + (i + 1),
-    value: counts["Route " + (i + 1)] || 0,
-  }));
+  return Array.from({ length: 10 }, (_, i) => {
+    const route = "Route " + (i + 1);
+    const detail = BUS_ROUTE_DETAILS[i];
+    const cap = detail ? detail.capacity : 60;
+    const holders = counts[route] || 0;
+    const pct = ((holders / cap) * 100).toFixed(0);
+    return {
+      label: "R" + (i + 1),
+      value: holders,
+      tooltip: {
+        title: route,
+        body: "Holders: " + holders + " of " + cap + " capacity (" + pct + "%)" +
+              (detail ? "\nDriver: " + detail.driver : ""),
+      },
+    };
+  });
 }
 
 function renderDashboard() {
@@ -3027,14 +3198,35 @@ function renderHostelKPIs() {
 
 function renderHostelCharts() {
   const filtered = hostelFilteredResidents();
+  const total = filtered.length || 1;
   renderBarChart(
     document.getElementById("chart-hostel-dept"),
-    DEPTS.map(d => ({ label: d, value: filtered.filter(s => s.dept === d).length })),
+    DEPTS.map(d => {
+      const count = filtered.filter(s => s.dept === d).length;
+      return {
+        label: d,
+        value: count,
+        tooltip: {
+          title: DEPT_FULL[d] || d,
+          body: "Residents: " + count.toLocaleString() + "\nShare: " + ((count / total) * 100).toFixed(1) + "% of filtered residents",
+        },
+      };
+    }),
     { color: "#5C2D91" }
   );
   renderBarChart(
     document.getElementById("chart-hostel-year"),
-    CLASSES.map(c => ({ label: c.split(" ")[0], value: filtered.filter(s => s.class === c).length })),
+    CLASSES.map(c => {
+      const count = filtered.filter(s => s.class === c).length;
+      return {
+        label: c.split(" ")[0],
+        value: count,
+        tooltip: {
+          title: c,
+          body: "Residents: " + count.toLocaleString() + "\nShare: " + ((count / total) * 100).toFixed(1) + "% of filtered residents",
+        },
+      };
+    }),
     { color: "#107C10" }
   );
 }
